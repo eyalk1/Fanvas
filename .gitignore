@@ -1,8 +1,8 @@
-*.o
-**/Fanvas
+**.o
 *.dblist
 .sconsign.dblite
 *.dblite
 .cache
 compile_commands.json
 todo.md
+

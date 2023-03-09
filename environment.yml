@@ -1,0 +1,11 @@
+name: canvas
+channels:
+  - defaults
+dependencies:
+  - clangxx
+  - gxx
+  - clang-tools
+  - pip
+  - libcxx
+  - pip:
+    - scons
