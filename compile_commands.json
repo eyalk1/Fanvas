@@ -1,0 +1,44 @@
+[
+    {
+        "command": "g++ -o src/setting.o -c -std=c++23 -O0 -g -fsanitize=address -Iinclude src/setting.cpp",
+        "directory": "/home/kamitchi/dev/canvas",
+        "file": "src/setting.cpp",
+        "output": "src/setting.o"
+    },
+    {
+        "command": "g++ -o src/UIManager.o -c -std=c++23 -O0 -g -fsanitize=address -Iinclude src/UIManager.cpp",
+        "directory": "/home/kamitchi/dev/canvas",
+        "file": "src/UIManager.cpp",
+        "output": "src/UIManager.o"
+    },
+    {
+        "command": "g++ -o src/Canvas.o -c -std=c++23 -O0 -g -fsanitize=address -Iinclude src/Canvas.cpp",
+        "directory": "/home/kamitchi/dev/canvas",
+        "file": "src/Canvas.cpp",
+        "output": "src/Canvas.o"
+    },
+    {
+        "command": "g++ -o src/WindowManager.o -c -std=c++23 -O0 -g -fsanitize=address -Iinclude src/WindowManager.cpp",
+        "directory": "/home/kamitchi/dev/canvas",
+        "file": "src/WindowManager.cpp",
+        "output": "src/WindowManager.o"
+    },
+    {
+        "command": "g++ -o src/TextWindow.o -c -std=c++23 -O0 -g -fsanitize=address -Iinclude src/TextWindow.cpp",
+        "directory": "/home/kamitchi/dev/canvas",
+        "file": "src/TextWindow.cpp",
+        "output": "src/TextWindow.o"
+    },
+    {
+        "command": "g++ -o src/rectangles.o -c -std=c++23 -O0 -g -fsanitize=address -Iinclude src/rectangles.cpp",
+        "directory": "/home/kamitchi/dev/canvas",
+        "file": "src/rectangles.cpp",
+        "output": "src/rectangles.o"
+    },
+    {
+        "command": "g++ -o src/main.o -c -std=c++23 -O0 -g -fsanitize=address -Iinclude src/main.cpp",
+        "directory": "/home/kamitchi/dev/canvas",
+        "file": "src/main.cpp",
+        "output": "src/main.o"
+    }
+]
