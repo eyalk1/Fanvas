@@ -1,0 +1,7 @@
+*.o
+**/ShitFuckMyLife
+*.dblist
+.sconsign.dblite
+*.dblite
+.cache
+compile_commands.json
