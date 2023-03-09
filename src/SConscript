@@ -3,4 +3,4 @@ from glob import glob
 Import('env')
 source_files = glob("*.cpp")
 
-env.Program('ShitFuckMyLife', source_files)
+env.Program('Fanvas', source_files)

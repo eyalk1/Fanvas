@@ -1,7 +1,8 @@
 *.o
-**/ShitFuckMyLife
+**/Fanvas
 *.dblist
 .sconsign.dblite
 *.dblite
 .cache
 compile_commands.json
+todo.md
