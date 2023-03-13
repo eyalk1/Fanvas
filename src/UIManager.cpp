@@ -1,6 +1,5 @@
 #include "../include/UIManager.hpp"
-#include "UserAction.hpp"
-#include <list>
+#include "../include/UserAction.hpp"
 
 namespace Canvas {
 UIHandler::UIHandler(FindWindowsFromWindowManager find_windows)
@@ -30,7 +29,8 @@ auto UIHandler::handle_keypress(sf::Event::KeyEvent event) -> Actions {
     return {close_app()};
     break;
   case sf::Keyboard::Space:
-    return {add_window{"header!!!", "source!\nblablabla\nyay!\n"}};
+    return {add_window{.header = "header!!!",
+                       .source = "source!\nblablabla\nyay!\n"}};
 
     break;
   default:
@@ -48,23 +48,23 @@ auto UIHandler::handle_mouse_move(sf::Event::MouseMoveEvent mouse) -> Actions {
   auto last_hovered =
       m_curr_hover == hovered_window ? WindowSet() : m_curr_hover;
   m_curr_hover = hovered_window;
-  return {hover_window{m_curr_hover, last_hovered}};
+  return {hover_window(m_curr_hover, last_hovered)};
 }
 
 auto UIHandler::handle_mouse_press(sf::Event::MouseButtonEvent mouse)
     -> Actions {
-  enum surface { canvas, window, selected_window };
-  mouse_press =
-      Click{.ctrl = sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) ||
-                    sf::Keyboard::isKeyPressed(sf::Keyboard::RControl),
-            .initial_location = {static_cast<float>(mouse.x),
-                                 static_cast<float>(mouse.y)}};
   auto clicked_window = window_under_mouse(mouse.x, mouse.y);
   surface on = clicked_window.empty() ? canvas
                : (clicked_window & m_selected_windows).empty()
                    ? window
                    : selected_window;
-  bool is_ctrl = mouse_press.ctrl;
+  bool is_ctrl = sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) ||
+                 sf::Keyboard::isKeyPressed(sf::Keyboard::RControl);
+  return mouse_press_to_actions(is_ctrl, on, clicked_window);
+}
+
+auto UIHandler::mouse_press_to_actions(bool is_ctrl, surface on,
+                                    WindowSet clicked_window) -> Actions {
   switch (is_ctrl) {
   case true:
     switch (on) {
@@ -74,15 +74,15 @@ auto UIHandler::handle_mouse_press(sf::Event::MouseButtonEvent mouse)
       m_selected_windows.insert_range(clicked_window);
       auto last_highlight = m_highlight_window;
       m_highlight_window = clicked_window;
-      return {add_select_window{clicked_window},
-              set_highlight_window{clicked_window, last_highlight}};
+      return {add_select_window(clicked_window),
+              set_highlight_window(clicked_window, last_highlight)};
     }
     case selected_window: {
       m_selected_windows -= clicked_window;
       auto last_highlight = m_highlight_window;
       m_highlight_window = clicked_window;
-      return {deselect_window{clicked_window},
-              set_highlight_window{WindowSet(), last_highlight}};
+      return {deselect_window(clicked_window),
+              set_highlight_window(WindowSet(), last_highlight)};
     }
     }
     break;
@@ -92,7 +92,8 @@ auto UIHandler::handle_mouse_press(sf::Event::MouseButtonEvent mouse)
       // two lines just to merge two bit_sets wtf
       WindowSet ret(clicked_window);
       ret.insert_range(m_selected_windows);
-      return {deselect_window{ret}};
+      return {deselect_window{ret},
+              set_highlight_window(WindowSet(), ~WindowSet())};
     }
     case selected_window:
     case window: {
@@ -100,8 +101,8 @@ auto UIHandler::handle_mouse_press(sf::Event::MouseButtonEvent mouse)
       m_selected_windows = clicked_window;
       auto last_highlight = m_highlight_window;
       m_highlight_window = clicked_window;
-      return {set_select_window{.set = clicked_window, .unset = to_deselect},
-              set_highlight_window{clicked_window, last_highlight}};
+      return {set_select_window(clicked_window, to_deselect),
+              set_highlight_window(m_highlight_window, last_highlight)};
     }
     }
   }

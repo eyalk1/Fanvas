@@ -1,5 +1,6 @@
 #pragma once
 #include "UIManager.hpp"
+#include "UserAction.hpp"
 #include "WindowManager.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -16,7 +17,6 @@ public:
   UIHandler m_ui;
   WindowSet window_id;
 private:
-  auto handle_mouse(sf::Event mouse) -> void;
-  auto handle_keypress(sf::Event keypress) -> void;
+  auto handle_window_action(WindowAction action) -> void;
 };
 } // namespace Canvas

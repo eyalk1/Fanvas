@@ -7,38 +7,64 @@
 #include <variant>
 namespace Canvas {
 
-//TODO change o generic window command - add/set/remove + hover/select/highlight maybe add move too
-struct hover_window {
-  WindowSet set, unset;
+// ~~~~~~~~~~~~~~~~~~window commands~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//TODO: moveto only variant without inheritence
+struct window_command {
+  // MUST BE EMPTY SO WE WON'T USE VIRTUAL INHERITANCE!!
 };
-struct add_select_window {
+struct window_apply_command : public window_command {
+  window_apply_command(WindowSet set) : set(set) {}
   WindowSet set;
 };
-struct deselect_window {
+struct window_unapply_command : public window_command {
+  window_unapply_command(WindowSet unset) : unset(unset) {}
   WindowSet unset;
 };
-struct set_select_window {
-  WindowSet set, unset;
+struct window_set_command : public window_apply_command,
+                            public window_unapply_command {
+  window_set_command(WindowSet set, WindowSet unset)
+      : window_apply_command(set), window_unapply_command(unset) {}
+  using window_apply_command::set;
+  using window_unapply_command::unset;
 };
-struct set_highlight_window {
-  WindowSet set, unset;
+// concrete window commands
+struct hover_window : public window_set_command {
+  hover_window(WindowSet set, WindowSet unset)
+      : window_set_command(set, unset) {}
 };
-struct add_window {
+struct add_select_window : public window_apply_command {
+  add_select_window(WindowSet set) : window_apply_command(set) {}
+};
+struct deselect_window : public window_unapply_command {
+  deselect_window(WindowSet unset) : window_unapply_command(unset) {}
+};
+struct set_select_window : public window_set_command {
+  set_select_window(WindowSet set, WindowSet unset)
+      : window_set_command(set, unset) {}
+};
+struct set_highlight_window : public window_set_command {
+  set_highlight_window(WindowSet set, WindowSet unset)
+      : window_set_command(set, unset) {}
+};
+struct add_window : public window_command {
   std::string_view header, source;
 };
-struct start_selection_rect {};
-struct move_selection_rect {};
-struct move_windows {
-  WindowSet to_move;
+struct move_windows : public window_apply_command {
+  move_windows(WindowSet set) : window_apply_command(set) {}
   sf::Vector2f diff;
 };
-struct close_app {};
-struct nothing_action {};
+using WindowAction =
+    std::variant<hover_window, add_select_window, deselect_window,
+                 set_select_window, set_highlight_window, add_window,
+                 move_windows>;
 
-using UserAction = 
-    std::variant<hover_window, deselect_window, add_select_window,
-                 set_select_window, set_highlight_window, add_window, start_selection_rect,
-                 move_selection_rect, move_windows, close_app, nothing_action>;
+//~~~~~~~~~~~~~~~~~App commands~~~~~~~~~~~~~~~~~~~~~
+struct close_app {};
+
+using AppAction = std::variant<close_app>;
+
+//~~~~~~~~~~~~~~~User Commands~~~~~~~~~~~~~~~~~~~~
+using UserAction = std::variant<WindowAction, AppAction>;
 
 } // namespace Canvas
 #endif //

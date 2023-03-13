@@ -29,6 +29,7 @@ public:
       -> TextWindow const &;
   // give a predicate return all the windows that satisfy it
   auto findWindows(auto p) const -> WindowSet;
+  // apply an action to all the windows in the set
   template <WindowManager::actions TO_DO, typename... Args>
   auto apply(WindowSet windows, Args &&...args) -> void;
   auto deleteTextWindow(WindowSet windows) -> void;
