@@ -9,20 +9,8 @@
 using namespace Canvas;
 
 int main() {
-  App app(sf::VideoMode(600, 600));
+  EventDistributer app;
   sf::Clock glob_time;
-  while (app.m_render_window.isOpen()) {
-    SetSettings().SetTime() = glob_time.getElapsedTime();
-    glob_time.restart();
-
-    sf::Event event;
-    while (app.m_render_window.pollEvent(event)) {
-      app.handle_event(event);
-    }
-
-    app.m_render_window.clear();
-    app.m_render_window.draw(app.m_window_manager);
-    app.m_render_window.display();
-  }
+  app.run();
   return 0;
 }

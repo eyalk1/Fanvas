@@ -1,9 +1,4 @@
 *.o
-*.dblist
-.sconsign.dblite
-*.dblite
 .cache
+.sconsign.dblite
 compile_commands.json
-todo.md
-Fanvas
-

@@ -19,7 +19,7 @@ private:
   std::array<maybe_window, MAX_NUMBER_OF_WINDOWS> m_windows;
 
 public:
-  enum actions : size_t { decorate, move, action_amount };
+  enum actions : size_t { decorate, move, number_of_possible_actions };
   // draw all the windows managed by the manager
   auto draw(sf::RenderTarget &target, sf::RenderStates states) const
       -> void override;

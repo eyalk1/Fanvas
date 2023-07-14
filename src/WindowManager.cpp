@@ -21,7 +21,7 @@ class Transformable;
 namespace Canvas {
 auto WindowManager::get_all_windows() -> WindowSet {
   // since findWindows already checks for nullopt we just want any window
-  return findWindows([](auto const &window) { return true; });
+  return findWindows([](auto const &window) {(void)window; return true; });
 }
 
 auto WindowManager::newTextWindow(sf::String &&header, sf::String &&source)

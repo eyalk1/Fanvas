@@ -1,8 +1,8 @@
 #pragma once
 
 #include <SFML/Graphics/Font.hpp>
-#include <SFML/System/Vector2.hpp>
 #include <SFML/System/Clock.hpp>
+#include <SFML/System/Vector2.hpp>
 
 namespace Canvas {
 
@@ -13,17 +13,15 @@ public:                                                                        \
 private:                                                                       \
   type what { __VA_ARGS__ }
 
-#define SettingsSetter(what, type)                                             \
+#define SettingsSetter(what, type, ...)                                        \
 public:                                                                        \
   auto &Set##what() { return what; }                                           \
-  const auto &Get##what() const { return what; }                               \
-                                                                               \
-private:                                                                       \
-  type what
+  SettingsGetter(what, type, __VA_ARGS__)
 
 class Settings {
   Settings() {
-    if (!Font.loadFromFile("/usr/share/fonts/truetype/freefont/FreeMono.ttf")) {
+    std::string fontpath("/usr/share/fonts/truetype/freefont/FreeMono.ttf");
+    if (!Font.loadFromFile(fontpath)) {
       throw "no font";
     }
   }

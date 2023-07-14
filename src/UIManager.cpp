@@ -1,58 +1,87 @@
 #include "../include/UIManager.hpp"
 #include "../include/UserAction.hpp"
-
+#include "consts.hpp"
+#include <SFML/Window/VideoMode.hpp>
+#include <expected>
 namespace Canvas {
-UIHandler::UIHandler(FindWindowsFromWindowManager find_windows)
-    : m_find_windows(find_windows), m_selected_windows() {}
-auto UIHandler::handle_event(sf::Event event) -> Actions {
+UIHandler::UIHandler()
+    : title("shit ass piss"), m_render_window(sf::VideoMode(100, 100), title),
+      m_window_manager() {}
+
+auto UIHandler::generate_event_impl() -> std::optional<Canvas::Event> {
+  sf::Event event;
+  if (m_render_window.pollEvent(event)) {
+    return process_sf_event(event);
+  }
+  return std::nullopt;
+}
+
+auto UIHandler::is_window_open() -> bool { return m_render_window.isOpen(); }
+
+auto UIHandler::process_sf_event(sf::Event event)
+    -> std::optional<Canvas::Event> {
   switch (event.type) {
   case sf::Event::KeyPressed:
   case sf::Event::KeyReleased:
     return handle_keypress(event.key);
 
+    break;
   case sf::Event::MouseButtonPressed:
     return handle_mouse_press(event.mouseButton);
+    break;
   case sf::Event::MouseButtonReleased:
     return handle_mouse_release(event.mouseButton);
+    break;
   case sf::Event::MouseMoved:
     return handle_mouse_move(event.mouseMove);
+    break;
   default:
-    return {};
+      break;
   }
+  return {};
 }
 
-auto UIHandler::handle_keypress(sf::Event::KeyEvent event) -> Actions {
+auto UIHandler::handle_keypress(sf::Event::KeyEvent event)
+    -> std::optional<Canvas::Event> {
   // escape should deselct everything
   // delete should delete selected entities
   switch (event.code) {
   case sf::Keyboard::Escape:
-    return {close_app()};
+    m_render_window.close();
+    return Canvas::Event(close_app());
     break;
   case sf::Keyboard::Space:
-    return {add_window{.header = "header!!!",
-                       .source = "source!\nblablabla\nyay!\n"}};
-
+    add_window("sample header", "source\nbla\blablabla\nnotjs");
+    return {};
     break;
   default:
     return {};
     break;
   }
 }
-auto UIHandler::handle_mouse_release(sf::Event::MouseButtonEvent mouse)
-    -> Actions {
-  return Actions();
+void UIHandler::add_window(std::string_view header, std::string_view source) {
+  m_window_manager.newTextWindow(std::string(header), std::string(source));
 }
 
-auto UIHandler::handle_mouse_move(sf::Event::MouseMoveEvent mouse) -> Actions {
-  auto hovered_window = window_under_mouse(mouse.x, mouse.y);
-  auto last_hovered =
-      m_curr_hover == hovered_window ? WindowSet() : m_curr_hover;
-  m_curr_hover = hovered_window;
-  return {hover_window(m_curr_hover, last_hovered)};
+auto UIHandler::handle_event(Canvas::Event event) -> void {
+  (void)event;
+  PASS;
+}
+
+auto UIHandler::handle_mouse_release(sf::Event::MouseButtonEvent mouse)
+    -> std::optional<Canvas::Event> {
+  (void)mouse;
+  return {};
+}
+
+auto UIHandler::handle_mouse_move(sf::Event::MouseMoveEvent mouse)
+    -> std::optional<Canvas::Event> {
+  update_mouse_hover(mouse);
+  return {};
 }
 
 auto UIHandler::handle_mouse_press(sf::Event::MouseButtonEvent mouse)
-    -> Actions {
+    -> std::optional<Canvas::Event> {
   auto clicked_window = window_under_mouse(mouse.x, mouse.y);
   surface on = clicked_window.empty() ? canvas
                : (clicked_window & m_selected_windows).empty()
@@ -64,54 +93,75 @@ auto UIHandler::handle_mouse_press(sf::Event::MouseButtonEvent mouse)
 }
 
 auto UIHandler::mouse_press_to_actions(bool is_ctrl, surface on,
-                                    WindowSet clicked_window) -> Actions {
-  switch (is_ctrl) {
-  case true:
+                                       WindowSet clicked_window)
+    -> std::optional<Canvas::Event> {
+  auto last_highlight = m_highlight_window;
+  if (is_ctrl) {
     switch (on) {
     case canvas:
       return {};
-    case window: {
+      break;
+    case window:
       m_selected_windows.insert_range(clicked_window);
-      auto last_highlight = m_highlight_window;
       m_highlight_window = clicked_window;
-      return {add_select_window(clicked_window),
-              set_highlight_window(clicked_window, last_highlight)};
-    }
-    case selected_window: {
+      select_window(clicked_window);
+      highlight_window(clicked_window, last_highlight);
+      return {};
+      break;
+    case selected_window:
       m_selected_windows -= clicked_window;
-      auto last_highlight = m_highlight_window;
       m_highlight_window = clicked_window;
-      return {deselect_window(clicked_window),
-              set_highlight_window(WindowSet(), last_highlight)};
+      select_window({}, clicked_window);
+      highlight_window({}, last_highlight);
     }
-    }
-    break;
-  case false:
+  } else {
     switch (on) {
     case canvas: {
       // two lines just to merge two bit_sets wtf
       WindowSet ret(clicked_window);
       ret.insert_range(m_selected_windows);
-      return {deselect_window{ret},
-              set_highlight_window(WindowSet(), ~WindowSet())};
-    }
+      select_window({}, ret);
+      highlight_window(WindowSet(), ~WindowSet());
+    } break;
     case selected_window:
-    case window: {
+      break;
+    case window:
       auto to_deselect = m_selected_windows - clicked_window;
       m_selected_windows = clicked_window;
       auto last_highlight = m_highlight_window;
       m_highlight_window = clicked_window;
-      return {set_select_window(clicked_window, to_deselect),
-              set_highlight_window(m_highlight_window, last_highlight)};
-    }
+      select_window(clicked_window, to_deselect);
+      highlight_window(m_highlight_window, last_highlight);
     }
   }
   __builtin_unreachable();
 }
 
+auto UIHandler::update_mouse_hover(sf::Event::MouseMoveEvent mouse) -> void {
+  auto hovered_window = window_under_mouse(mouse.x, mouse.y);
+  auto last_hovered =
+      m_curr_hover == hovered_window ? WindowSet() : m_curr_hover;
+  m_curr_hover = hovered_window;
+  m_window_manager.apply<WindowManager::decorate>(
+      m_curr_hover, decorations::hover, decorations::hover);
+  m_window_manager.apply<WindowManager::decorate>(
+      last_hovered, decorations::hover, decorations::nothing);
+}
+
+auto UIHandler::select_window(WindowSet clicked, WindowSet last) -> void {
+  m_window_manager.apply<WindowManager::decorate>(clicked, decorations::select,
+                                                  decorations::select);
+  m_window_manager.apply<WindowManager::decorate>(last, decorations::select,
+                                                  decorations::nothing);
+}
+auto UIHandler::highlight_window(WindowSet current, WindowSet last) -> void {
+  m_window_manager.apply<WindowManager::decorate>(
+      current, decorations::highlight, decorations::highlight);
+  m_window_manager.apply<WindowManager::decorate>(last, decorations::highlight,
+                                                  decorations::nothing);
+}
 auto UIHandler::window_under_mouse(int x, int y) -> WindowSet {
-  // we assume that the event is  return
-  return m_find_windows([=](auto const &window) {
+  return m_window_manager.findWindows([=](auto const &window) {
     return window.contains({x, y});
   });
 }

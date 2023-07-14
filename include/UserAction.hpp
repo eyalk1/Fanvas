@@ -8,7 +8,7 @@
 namespace Canvas {
 
 // ~~~~~~~~~~~~~~~~~~window commands~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//TODO: moveto only variant without inheritence
+// TODO: moveto only variant without inheritence
 struct window_command {
   // MUST BE EMPTY SO WE WON'T USE VIRTUAL INHERITANCE!!
 };
@@ -59,12 +59,30 @@ using WindowAction =
                  move_windows>;
 
 //~~~~~~~~~~~~~~~~~App commands~~~~~~~~~~~~~~~~~~~~~
+
 struct close_app {};
 
-using AppAction = std::variant<close_app>;
+struct open_repo {
+  open_repo(std::string_view path_to_repo) : path(path_to_repo) {}
+  std::string_view path;
+};
 
-//~~~~~~~~~~~~~~~User Commands~~~~~~~~~~~~~~~~~~~~
-using UserAction = std::variant<WindowAction, AppAction>;
+using AppAction = std::variant<close_app, open_repo>;
+
+//~~~~~~~~~~~~~~~User Commands~~~~~~~~~~~~~~~~~~~
+struct Event {
+  using data_t = std::variant<WindowAction, AppAction>;
+  operator data_t&() { return data; }
+  Entities recipient_hint;
+  Event(data_t data, Entities hint = Entities::NO_ONE)
+      : recipient_hint(hint), data(data){};
+
+private:
+  std::variant<WindowAction, AppAction> data;
+};
+
+using AppCmd = std::array<std::optional<Canvas::Event>,
+                          MAX_NUMBER_OF_APP_ACTIONS_PER_UI_EVENT>;
 
 } // namespace Canvas
 #endif //

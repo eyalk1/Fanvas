@@ -91,7 +91,7 @@ public:
       };
       return tied(other) <=> tied(*this);
     } else if constexpr (num_logical_blocks >= 3) {
-      return std::lexicographical_compare_three_way(
+      return std::lexicographical_compare(
           std::rbegin(other.m_data), std::rend(other.m_data),
           std::rbegin(this->m_data), std::rend(this->m_data));
     }
