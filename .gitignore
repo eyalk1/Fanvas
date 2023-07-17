@@ -1,4 +1,5 @@
 *.o
+*.a
 .cache
 .sconsign.dblite
 compile_commands.json
