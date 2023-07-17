@@ -31,9 +31,10 @@ class Settings {
 public:
   SettingsGetter(Font, sf::Font);
   SettingsGetter(MaxTextWindowWidth, uint, 99);
-  SettingsGetter(TextSize, int, 26);
-  SettingsGetter(HeaderPartialSize, float, 0.5);
-  SettingsGetter(Slack, uint, 5);
+  SettingsGetter(TextSize, uint, 26);
+  SettingsGetter(HeaderPartialSizeMul, uint, 1);
+  SettingsGetter(HeaderPartialSizeDiv, uint, 2);
+  SettingsGetter(Slack, float, 5);
 
   // TODO make mouse pos a member of the App
   SettingsSetter(MousePos, sf::Vector2i);

@@ -1,6 +1,7 @@
 from glob import glob
 
-Import('env')
+Import('env', 'imgui_sfml_lib')
 source_files = glob("*.cpp")
+libs = env['LIBS'] + imgui_sfml_lib
 
-env.Program('Fanvas', source_files)
+env.Program('Fanvas', source_files, LIBS=libs)

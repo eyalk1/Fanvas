@@ -24,9 +24,9 @@ enum decorations : size_t {
 constexpr auto SELECTED_THICKNESS = 4;
 constexpr auto DEFAULT_THICKNESS = 1;
 
-class TextWindow : public sf::Drawable, public sf::Transformable {
+class CodeBlock : public sf::Drawable, public sf::Transformable {
 public:
-  TextWindow(sf::String header, sf::String source_code);
+  CodeBlock(sf::String header, sf::String source_code);
   auto draw(sf::RenderTarget &target, sf::RenderStates states) const
       -> void override;
 

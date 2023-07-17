@@ -2,7 +2,7 @@
 #include "TextWindow.hpp"
 #include "utility.hpp"
 #include "consts.hpp"
-#include "bit_set.hpp"
+#include "bit_set/bit_set.hpp"
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <array>
@@ -13,9 +13,9 @@
 
 namespace Canvas {
 //TODO: make template taking amount of windows?
-class WindowManager : public sf::Drawable {
+class CodeBlocksManager : public sf::Drawable {
 private:
-  using maybe_window = std::optional<TextWindow>;
+  using maybe_window = std::optional<CodeBlock>;
   std::array<maybe_window, MAX_NUMBER_OF_WINDOWS> m_windows;
 
 public:
@@ -25,18 +25,18 @@ public:
       -> void override;
 
   // forward the parameters to a new allocated window object
-  auto newTextWindow(sf::String &&header, sf::String &&source)
-      -> TextWindow const &;
+  auto newCodeBlock(sf::String &&header, sf::String &&source)
+      -> CodeBlock const &;
   // give a predicate return all the windows that satisfy it
-  auto findWindows(auto p) const -> WindowSet;
+  auto findBlocks(auto p) const -> BlockSet;
   // apply an action to all the windows in the set
-  template <WindowManager::actions TO_DO, typename... Args>
-  auto apply(WindowSet windows, Args &&...args) -> void;
-  auto deleteTextWindow(WindowSet windows) -> void;
+  template <CodeBlocksManager::actions TO_DO, typename... Args>
+  auto apply(BlockSet windows, Args &&...args) -> void;
+  auto deleteCodeBlock(BlockSet windows) -> void;
 
-  auto get_all_windows() -> WindowSet;
+  auto get_all_windows() -> BlockSet;
 private:
-  auto findOpenspace(sf::Vector2f rec_size, WindowSet available_windows)
+  auto findOpenspace(sf::Vector2f rec_size, BlockSet available_windows)
       -> sf::Vector2f;
 };
 
@@ -45,14 +45,14 @@ private:
 // 1. double the window API for forwarding
 // 2. bleed details about the window objects themselves - having the user
 //    provide a member-function-pointer
-template <WindowManager::actions Actions> consteval auto action2function();
+template <CodeBlocksManager::actions Actions> consteval auto action2function();
 
 // IMPLEMENTATIONS
 
-auto WindowManager::findWindows(auto predicate) const
-    -> WindowSet {
+auto CodeBlocksManager::findBlocks(auto predicate) const
+    -> BlockSet {
   int i = 0;
-  WindowSet ret;
+  BlockSet ret;
   for (auto const &window : m_windows) {
     if (window && predicate(window.value()))
       ret.add(i);
@@ -61,18 +61,18 @@ auto WindowManager::findWindows(auto predicate) const
   return ret;
 }
 
-template <WindowManager::actions TO_DO, typename... Args>
-auto WindowManager::apply(WindowSet windows, Args &&...args) -> void {
+template <CodeBlocksManager::actions TO_DO, typename... Args>
+auto CodeBlocksManager::apply(BlockSet windows, Args &&...args) -> void {
   for_indexes(windows, m_windows, action2function<TO_DO>(),
               std::forward<Args>(args)...);
 }
 
-template <WindowManager::actions Actions>
+template <CodeBlocksManager::actions Actions>
 consteval auto action2function() {
-  if constexpr (Actions == WindowManager::actions::decorate) {
-    return &TextWindow::decorate;
-  } else if constexpr (Actions == WindowManager::actions::move) {
-    return &TextWindow::move;
+  if constexpr (Actions == CodeBlocksManager::actions::decorate) {
+    return &CodeBlock::decorate;
+  } else if constexpr (Actions == CodeBlocksManager::actions::move) {
+    return &CodeBlock::move;
   }
 }
 

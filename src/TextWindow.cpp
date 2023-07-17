@@ -14,7 +14,7 @@
 #include <SFML/System/Vector2.hpp>
 
 namespace Canvas {
-auto TextWindow::draw(sf::RenderTarget &target, sf::RenderStates states) const
+auto CodeBlock::draw(sf::RenderTarget &target, sf::RenderStates states) const
     -> void {
   states.transform = getTransform();
   target.draw(m_source, states);
@@ -22,18 +22,19 @@ auto TextWindow::draw(sf::RenderTarget &target, sf::RenderStates states) const
   target.draw(m_border, states);
 }
 
-auto TextWindow::contains(sf::Vector2i pos) const -> bool {
+auto CodeBlock::contains(sf::Vector2i pos) const -> bool {
   auto diff = getPosition();
-  return m_border.getGlobalBounds().contains({pos.x - diff.x, pos.y - diff.y});
+  auto fpos = sf::Vector2f(pos);
+  return m_border.getGlobalBounds().contains({fpos.x - diff.x, fpos.y - diff.y});
 }
 
-auto TextWindow::getGlobalBounds() const -> sf::FloatRect {
+auto CodeBlock::getGlobalBounds() const -> sf::FloatRect {
   auto pos = getPosition();
   auto bounds = m_border.getGlobalBounds();
   return {pos.x, pos.y, bounds.width, bounds.height};
 }
 
-auto TextWindow::decorate(size_t decoration_filter, size_t to_decorate)
+auto CodeBlock::decorate(size_t decoration_filter, size_t to_decorate)
     -> void {
   if (decoration_filter & decorations::highlight) {
     m_border.setOutlineColor(to_decorate & decorations::highlight
@@ -52,12 +53,13 @@ auto TextWindow::decorate(size_t decoration_filter, size_t to_decorate)
   }
 }
 
-TextWindow::TextWindow(sf::String source, sf::String header)
+CodeBlock::CodeBlock(sf::String source, sf::String header)
     : m_source(sf::Text(source, GetSettings().GetFont(),
                         GetSettings().GetTextSize())),
       m_header(sf::Text(header, GetSettings().GetFont(),
                         GetSettings().GetTextSize() *
-                            GetSettings().GetHeaderPartialSize())),
+                            GetSettings().GetHeaderPartialSizeMul() /
+                            GetSettings().GetHeaderPartialSizeDiv())),
       m_border() {
   // TODO: take values from settings
   m_border.setOutlineColor(sf::Color::White);

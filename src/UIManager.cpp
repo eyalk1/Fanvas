@@ -1,42 +1,48 @@
 #include "../include/UIManager.hpp"
-#include "../include/UserAction.hpp"
+#include "../include/UserAction.hpp" // Canvas::Event
+#include "UImenus.hpp"
 #include "consts.hpp"
+#include "overloaded.hpp"
+#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
-#include <expected>
 namespace Canvas {
 UIHandler::UIHandler()
     : title("shit ass piss"), m_render_window(sf::VideoMode(100, 100), title),
-      m_window_manager() {}
+      m_block_manager() {}
 
-auto UIHandler::generate_event_impl() -> std::optional<Canvas::Event> {
+auto UIHandler::generate_event() -> std::optional<Canvas::Event> {
   sf::Event event;
   if (m_render_window.pollEvent(event)) {
-    return process_sf_event(event);
+    return handle_sf_event(event);
   }
   return std::nullopt;
 }
 
 auto UIHandler::is_window_open() -> bool { return m_render_window.isOpen(); }
 
-auto UIHandler::process_sf_event(sf::Event event)
+auto UIHandler::handle_sf_event(sf::Event event)
     -> std::optional<Canvas::Event> {
   switch (event.type) {
-  case sf::Event::KeyPressed:
-  case sf::Event::KeyReleased:
+  case sf::Event::KeyPressed:  //!< A key was pressed (data in event.key)
+  case sf::Event::KeyReleased: //!< A key was released (data in event.key)
+
     return handle_keypress(event.key);
 
     break;
-  case sf::Event::MouseButtonPressed:
+  case sf::Event::MouseButtonPressed: //!< A mouse button was pressed (data in
+                                      //!< event.mouseButton)
     return handle_mouse_press(event.mouseButton);
     break;
-  case sf::Event::MouseButtonReleased:
+  case sf::Event::MouseButtonReleased: //!< A mouse button was released (data in
+                                       //!< event.mouseButton)
     return handle_mouse_release(event.mouseButton);
     break;
-  case sf::Event::MouseMoved:
+  case sf::Event::MouseMoved: //!< The mouse cursor moved (data in
+                              //!< event.mouseMove)
     return handle_mouse_move(event.mouseMove);
     break;
   default:
-      break;
+    break;
   }
   return {};
 }
@@ -51,7 +57,7 @@ auto UIHandler::handle_keypress(sf::Event::KeyEvent event)
     return Canvas::Event(close_app());
     break;
   case sf::Keyboard::Space:
-    add_window("sample header", "source\nbla\blablabla\nnotjs");
+    TODO(enter main menu);
     return {};
     break;
   default:
@@ -59,13 +65,19 @@ auto UIHandler::handle_keypress(sf::Event::KeyEvent event)
     break;
   }
 }
-void UIHandler::add_window(std::string_view header, std::string_view source) {
-  m_window_manager.newTextWindow(std::string(header), std::string(source));
-}
 
-auto UIHandler::handle_event(Canvas::Event event) -> void {
-  (void)event;
-  PASS;
+auto UIHandler::handle_on_satisfy(Canvas::Event const &event)
+    -> std::optional<Canvas::Event> {
+  auto [new_event, new_ui_mode] =
+      std::visit(Overload{[event](auto &menu) -> maybe_event_menu {
+                            return menu.handle(event);
+                          },
+                          [](std::nullopt_t) -> maybe_event_menu {
+                            return {std::nullopt, std::nullopt};
+                          }},
+                 m_ui_mode);
+  m_ui_mode = new_ui_mode;
+  return new_event;
 }
 
 auto UIHandler::handle_mouse_release(sf::Event::MouseButtonEvent mouse)
@@ -82,87 +94,95 @@ auto UIHandler::handle_mouse_move(sf::Event::MouseMoveEvent mouse)
 
 auto UIHandler::handle_mouse_press(sf::Event::MouseButtonEvent mouse)
     -> std::optional<Canvas::Event> {
-  auto clicked_window = window_under_mouse(mouse.x, mouse.y);
-  surface on = clicked_window.empty() ? canvas
-               : (clicked_window & m_selected_windows).empty()
-                   ? window
-                   : selected_window;
+  auto clicked_block = block_under_mouse(mouse.x, mouse.y);
+  surface on = clicked_block.empty() ? canvas
+               : (clicked_block & m_selected_blocks).empty()
+                   ? block
+                   : selected_block;
   bool is_ctrl = sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) ||
                  sf::Keyboard::isKeyPressed(sf::Keyboard::RControl);
-  return mouse_press_to_actions(is_ctrl, on, clicked_window);
+  return mouse_press_to_actions(is_ctrl, on, clicked_block);
 }
 
 auto UIHandler::mouse_press_to_actions(bool is_ctrl, surface on,
-                                       WindowSet clicked_window)
+                                       BlockSet clicked_block)
     -> std::optional<Canvas::Event> {
-  auto last_highlight = m_highlight_window;
+  auto last_highlight = m_highlight_block;
   if (is_ctrl) {
     switch (on) {
     case canvas:
       return {};
       break;
-    case window:
-      m_selected_windows.insert_range(clicked_window);
-      m_highlight_window = clicked_window;
-      select_window(clicked_window);
-      highlight_window(clicked_window, last_highlight);
+    case block:
+      m_selected_blocks.insert_range(clicked_block);
+      m_highlight_block = clicked_block;
+      select_block(clicked_block);
+      highlight_block(clicked_block, last_highlight);
       return {};
       break;
-    case selected_window:
-      m_selected_windows -= clicked_window;
-      m_highlight_window = clicked_window;
-      select_window({}, clicked_window);
-      highlight_window({}, last_highlight);
+    case selected_block:
+      m_selected_blocks -= clicked_block;
+      m_highlight_block = clicked_block;
+      select_block({}, clicked_block);
+      highlight_block({}, last_highlight);
+    default:
+      break;
     }
   } else {
     switch (on) {
     case canvas: {
       // two lines just to merge two bit_sets wtf
-      WindowSet ret(clicked_window);
-      ret.insert_range(m_selected_windows);
-      select_window({}, ret);
-      highlight_window(WindowSet(), ~WindowSet());
+      BlockSet ret(clicked_block);
+      ret.insert_range(m_selected_blocks);
+      select_block({}, ret);
+      highlight_block(BlockSet(), ~BlockSet());
     } break;
-    case selected_window:
+    case selected_block:
       break;
-    case window:
-      auto to_deselect = m_selected_windows - clicked_window;
-      m_selected_windows = clicked_window;
-      auto last_highlight = m_highlight_window;
-      m_highlight_window = clicked_window;
-      select_window(clicked_window, to_deselect);
-      highlight_window(m_highlight_window, last_highlight);
+    case block: {
+      auto to_deselect = m_selected_blocks - clicked_block;
+      m_selected_blocks = clicked_block;
+      last_highlight = m_highlight_block;
+      m_highlight_block = clicked_block;
+      select_block(clicked_block, to_deselect);
+      highlight_block(m_highlight_block, last_highlight);
+    }
+    default:
+      break;
     }
   }
   __builtin_unreachable();
 }
 
 auto UIHandler::update_mouse_hover(sf::Event::MouseMoveEvent mouse) -> void {
-  auto hovered_window = window_under_mouse(mouse.x, mouse.y);
+  auto hovered_block = block_under_mouse(mouse.x, mouse.y);
   auto last_hovered =
-      m_curr_hover == hovered_window ? WindowSet() : m_curr_hover;
-  m_curr_hover = hovered_window;
-  m_window_manager.apply<WindowManager::decorate>(
+      m_curr_hover == hovered_block ? BlockSet() : m_curr_hover;
+  m_curr_hover = hovered_block;
+  m_block_manager.apply<CodeBlocksManager::decorate>(
       m_curr_hover, decorations::hover, decorations::hover);
-  m_window_manager.apply<WindowManager::decorate>(
+  m_block_manager.apply<CodeBlocksManager::decorate>(
       last_hovered, decorations::hover, decorations::nothing);
 }
 
-auto UIHandler::select_window(WindowSet clicked, WindowSet last) -> void {
-  m_window_manager.apply<WindowManager::decorate>(clicked, decorations::select,
-                                                  decorations::select);
-  m_window_manager.apply<WindowManager::decorate>(last, decorations::select,
-                                                  decorations::nothing);
+auto UIHandler::select_block(BlockSet clicked, BlockSet last) -> void {
+  m_block_manager.apply<CodeBlocksManager::decorate>(
+      clicked, decorations::select, decorations::select);
+  m_block_manager.apply<CodeBlocksManager::decorate>(last, decorations::select,
+                                                      decorations::nothing);
 }
-auto UIHandler::highlight_window(WindowSet current, WindowSet last) -> void {
-  m_window_manager.apply<WindowManager::decorate>(
+auto UIHandler::highlight_block(BlockSet current, BlockSet last) -> void {
+  m_block_manager.apply<CodeBlocksManager::decorate>(
       current, decorations::highlight, decorations::highlight);
-  m_window_manager.apply<WindowManager::decorate>(last, decorations::highlight,
-                                                  decorations::nothing);
+  m_block_manager.apply<CodeBlocksManager::decorate>(
+      last, decorations::highlight, decorations::nothing);
 }
-auto UIHandler::window_under_mouse(int x, int y) -> WindowSet {
-  return m_window_manager.findWindows([=](auto const &window) {
-    return window.contains({x, y});
+auto UIHandler::block_under_mouse(int x, int y) -> BlockSet {
+  return m_block_manager.findBlocks([=](auto const &block_in_question) {
+    return block_in_question.contains({x, y});
   });
+}
+void UIHandler::add_block(std::string_view header, std::string_view source) {
+  m_block_manager.newCodeBlock(std::string(header), std::string(source));
 }
 } // namespace Canvas

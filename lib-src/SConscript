@@ -1,0 +1,16 @@
+from glob import glob
+Import("env")
+
+libs_src = "lib-src"
+libs_inc = "lib-include"
+imgui_path = "imgui"
+imgui_sfml_path = "imgui-sfml"
+
+sources = glob(imgui_path + "/*.cpp") + glob(imgui_sfml_path + "/*.cpp")
+cxxflags = " ".join(list(filter(lambda x: not x.startswith("-W"), env["CXXFLAGS"])))
+print(cxxflags)
+additional_includes = env['CPPPATH'] + ["../lib-include/"+imgui_path, "../lib-include/"+imgui_sfml_path]
+imgui_sfml_lib = env.StaticLibrary("imgui-sfml", sources,CPPPATH=additional_includes,CXXFLAGS=cxxflags)
+
+Export('imgui_sfml_lib')
+

@@ -4,7 +4,7 @@
 #include "consts.hpp"
 #include "event_generator.hpp"
 namespace CircularQ {
-#include "../include/circularQueue.hpp"
+#include "circularQueue/circularQueue.hpp"
 }
 #include <optional>
 

@@ -1,4 +1,3 @@
-
 #include "../include/Canvas.hpp"
 #include "../include/TextWindow.hpp"
 #include "../include/UIAction.hpp"
@@ -13,19 +12,20 @@
 
 namespace Canvas {
 
-EventDistributer::EventDistributer() {}
+EventDistributer::EventDistributer() : m_ui(), m_event_queue() {}
 
 auto EventDistributer::run() -> void {
   while (m_ui.is_window_open()) {
     // for each member that can generate an event - generate and add the event
     // to the queue
     add_event(m_ui.generate_event());
+    TODO(add_event(m_lsp.generate_event()));
     // empty the queue syncronicly - if things take time put a timer here and
     // let it run in the background or something - in the future
     while (!m_event_queue.empty()) {
-      auto event = m_event_queue.front();
-      handle_event(event);
-      m_event_queue.pop();
+      TODO(auto event = m_event_queue.front());
+      TODO(handle_event(event));
+      TODO(m_event_queue.pop());
     }
   }
 }
@@ -41,29 +41,32 @@ auto EventDistributer::handle_event(Canvas::Event const &event) -> void {
   // }
   // if there is a hint we will use it to short circuit the search for a
   // handler
-  if (event.recipient_hint != Entities::NO_ONE) {
-    handle_hint(event);
-  } else {
-    m_ui.handle_on_satisfy(event);
-    // m_lsp.handle_on_satisfy(event);
-  }
+  add_event(m_ui.handle_on_satisfy(event));
+  TODO(add_event(m_lsp.handle_on_satisfy(event)));
+  // if (event.recipient_hint != Entities::NO_ONE) {
+  //   handle_hint(event);
+  // } else {
+  //   m_ui.handle_on_satisfy(event);
+  //   // m_lsp.handle_on_satisfy(event);
+  // }
 }
 
 void EventDistributer::handle_hint(Canvas::Event const &event) {
   for (size_t i = 0; i < Entities::APP; i++) {
     switch (event.recipient_hint & i) {
     case Entities::UI:
-      m_ui.handle_event(event);
+      PASS(); // m_ui.handle_event(event));
       break;
     case Entities::LSP:
-      PASS;
+      PASS();
       break;
     case Entities::APP:
-      PASS;
+      PASS();
       // m_common_handler.handle_event(event);
       break;
     case Entities::NO_ONE:
-      PASS;
+    default:
+      PASS();
     }
   }
 }
