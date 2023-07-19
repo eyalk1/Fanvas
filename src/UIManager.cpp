@@ -13,7 +13,7 @@ UIHandler::UIHandler()
 auto UIHandler::generate_event() -> std::optional<Canvas::Event> {
   sf::Event event;
   if (m_render_window.pollEvent(event)) {
-    return handle_sf_event(event);
+    return hadle_sf_event(event);
   }
   return std::nullopt;
 }
@@ -22,6 +22,10 @@ auto UIHandler::is_window_open() -> bool { return m_render_window.isOpen(); }
 
 auto UIHandler::handle_sf_event(sf::Event event)
     -> std::optional<Canvas::Event> {
+  if (m_ui_mode.index() == 5) {
+      m_ui_mode
+    }
+    
   switch (event.type) {
   case sf::Event::KeyPressed:  //!< A key was pressed (data in event.key)
   case sf::Event::KeyReleased: //!< A key was released (data in event.key)
@@ -73,7 +77,7 @@ auto UIHandler::handle_on_satisfy(Canvas::Event const &event)
                             return menu.handle(event);
                           },
                           [](std::nullopt_t) -> maybe_event_menu {
-                            return {std::nullopt, std::nullopt};
+                            return {};
                           }},
                  m_ui_mode);
   m_ui_mode = new_ui_mode;

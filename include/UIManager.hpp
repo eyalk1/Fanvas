@@ -1,10 +1,9 @@
 #ifndef UIHANDLER__HPP
 #define UIHANDLER__HPP
-#include "UserAction.hpp"
 #include "UImenus.hpp"
+#include "UserAction.hpp"
 #include "WindowManager.hpp"
 #include "consts.hpp"
-#include "event_generator.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 #include <string>
@@ -12,10 +11,7 @@
 
 namespace Canvas {
 
-struct UIHandler { // : public event_generator<UIHandler> {
-  // friend class event_generator<UIHandler>;
-
-  UIHandler();
+struct UIHandler {
   auto is_window_open() -> bool;
   // this function checks internal state to see if there is an event that the UI
   // produces e.g. user requested to add a directory for pulling functions from
@@ -43,8 +39,7 @@ private:
       -> std::optional<Canvas::Event>;
   auto handle_mouse_move(sf::Event::MouseMoveEvent mouse)
       -> std::optional<Canvas::Event>;
-  auto mouse_press_to_actions(bool is_ctrl, surface on,
-                              BlockSet clicked_block)
+  auto mouse_press_to_actions(bool is_ctrl, surface on, BlockSet clicked_block)
       -> std::optional<Canvas::Event>;
 
   // handle actual dispatching of the internal events

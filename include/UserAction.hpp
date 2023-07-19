@@ -74,6 +74,7 @@ struct Event {
   using data_t = std::variant<WindowAction, AppAction>;
   operator data_t&() { return data; }
   Entities recipient_hint;
+  get
   Event(data_t _data, Entities hint = Entities::NO_ONE)
       : recipient_hint(hint), data(_data){};
 
