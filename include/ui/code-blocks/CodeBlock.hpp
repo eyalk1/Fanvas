@@ -1,7 +1,7 @@
 #pragma once
 
-#include "rectangles.hpp"
-#include "setting.hpp"
+#include "utils/rectangles.hpp"
+#include "common/setting.hpp"
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderStates.hpp>

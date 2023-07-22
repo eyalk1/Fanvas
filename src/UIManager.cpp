@@ -1,8 +1,8 @@
 #include "../include/UIManager.hpp"
 #include "../include/UserAction.hpp" // Canvas::Event
-#include "UImenus.hpp"
-#include "consts.hpp"
-#include "overloaded.hpp"
+#include "../include/ui/menus/UImenus.hpp"
+#include "../include/common/consts.hpp"
+#include "../include/utils/overloaded.hpp"
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 namespace Canvas {
@@ -13,7 +13,7 @@ UIHandler::UIHandler()
 auto UIHandler::generate_event() -> std::optional<Canvas::Event> {
   sf::Event event;
   if (m_render_window.pollEvent(event)) {
-    return hadle_sf_event(event);
+    return handle_sf_event(event);
   }
   return std::nullopt;
 }
@@ -23,7 +23,8 @@ auto UIHandler::is_window_open() -> bool { return m_render_window.isOpen(); }
 auto UIHandler::handle_sf_event(sf::Event event)
     -> std::optional<Canvas::Event> {
   if (m_ui_mode.index() == 5) {
-      m_ui_mode
+      PASS();
+      // m_ui_mode
     }
     
   switch (event.type) {

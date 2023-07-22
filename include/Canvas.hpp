@@ -1,8 +1,7 @@
 #pragma once
 // #include "CommonHandler.hpp"
 #include "UIManager.hpp"
-#include "consts.hpp"
-#include "event_generator.hpp"
+#include "common/consts.hpp"
 namespace CircularQ {
 #include "circularQueue/circularQueue.hpp"
 }

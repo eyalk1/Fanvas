@@ -1,7 +1,7 @@
 #pragma once
-#include "TextWindow.hpp"
-#include "utility.hpp"
-#include "consts.hpp"
+#include "ui/code-blocks/CodeBlock.hpp"
+#include "utils/utility.hpp"
+#include "common/consts.hpp"
 #include "bit_set/bit_set.hpp"
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/System/Vector2.hpp>

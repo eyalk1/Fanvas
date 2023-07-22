@@ -1,9 +1,9 @@
 #ifndef UIHANDLER__HPP
 #define UIHANDLER__HPP
-#include "UImenus.hpp"
 #include "UserAction.hpp"
-#include "WindowManager.hpp"
-#include "consts.hpp"
+#include "common/consts.hpp"
+#include "ui/code-blocks/CodeBlockManager.hpp"
+#include "ui/menus/UImenus.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 #include <string>
@@ -19,6 +19,7 @@ struct UIHandler {
   // check if the event is handelable by the uihandler if so - handle
   auto handle_on_satisfy(Canvas::Event const &event)
       -> std::optional<Canvas::Event>;
+  UIHandler();
 
 private:
   enum surface { canvas, block, selected_block };

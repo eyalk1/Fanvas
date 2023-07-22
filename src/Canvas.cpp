@@ -1,10 +1,10 @@
 #include "../include/Canvas.hpp"
-#include "../include/TextWindow.hpp"
-#include "../include/UIAction.hpp"
+#include "../include/ui/code-blocks/CodeBlock.hpp"
+// #include "../include/UIAction.hpp"
 #include "../include/UserAction.hpp"
-#include "../include/overloaded.hpp"
-#include "consts.hpp"
-#include "setting.hpp"
+#include "../include/utils/overloaded.hpp"
+#include "../include/common/consts.hpp"
+#include "../include/common/setting.hpp"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
