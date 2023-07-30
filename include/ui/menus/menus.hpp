@@ -4,4 +4,5 @@
 #include "settings_menu.hpp"
 #include "find_menu.hpp"
 #include "workspace_menu.hpp"
-#include "UImenus-fwd.hpp"
+#include "menus-fwd.hpp"
+

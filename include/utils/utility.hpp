@@ -4,6 +4,14 @@
 #include <functional>
 #include <utility>
 
+#define PASS()
+
+#define TODO(...)                                                              \
+  { /*__va_args__*/                                                            \
+  }
+
+#define UNUSED(var) "(void)var"
+
 template <typename CONTAINER, typename Func, typename... Args>
 auto for_each_optional(CONTAINER const &thing, Func const &f, Args&&... args) -> void {
   for (auto const &t : thing)

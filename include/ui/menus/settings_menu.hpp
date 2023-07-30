@@ -1,5 +1,5 @@
 #pragma once
-#include "UImenus.hpp"
+#include "ui/menus/menus-fwd.hpp"
 namespace Canvas {
 
   // list of settings with their values

@@ -1,5 +1,5 @@
 #pragma once
-#include "UImenus.hpp"
+#include "ui/menus/menus-fwd.hpp"
 #include <string_view>
 namespace Canvas {
 

@@ -1,15 +1,9 @@
 #ifndef CONSTS__HPP
 #define CONSTS__HPP
 #include <array>
-#include <concepts> // constructible_from, input_iterator, range, unsigned_integral
+// #include <concepts> // constructible_from, input_iterator, range, unsigned_integral
 #include <cstddef> // size_t
 #include <optional>
-
-#define PASS()
-
-#define TODO(...)                                                              \
-  { /*__va_args__*/                                                            \
-  }
 
 namespace xstd {
 template <std::size_t N, std::unsigned_integral> class bit_set;

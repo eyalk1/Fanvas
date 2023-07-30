@@ -1,6 +1,6 @@
-#include "../include/Canvas.hpp"
-#include "../include/ui/code-blocks/CodeBlock.hpp"
-#include "../include/ui/code-blocks/CodeBlockManager.hpp"
+#include "Canvas.hpp"
+#include "ui/code-blocks/CodeBlock.hpp"
+#include "ui/code-blocks/CodeBlockManager.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>

@@ -1,11 +1,11 @@
-#include "ui/menus/main_menu.hpp"
+#include "ui/menus/settings_menu.hpp"
 #include "ui/menus/menus.hpp"
 #include "utils/utility.hpp"
 #include <iostream>
 
 namespace Canvas {
-main_menu::main_menu() { std::cout << main_menu::text << std::endl; }
-maybe_event_menu main_menu::handle(Canvas::Event e) {
+// settings_menu::settings_menu() { std::cout << settings_menu::text << std::endl; }
+maybe_event_menu settings_menu::handle(Canvas::Event e) {
     UNUSED(e);
     (void)e;
   // switch (e) {

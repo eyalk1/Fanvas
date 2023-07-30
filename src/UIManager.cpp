@@ -1,6 +1,6 @@
-#include "../include/UIManager.hpp"
+#include "UIManager.hpp"
 #include "../include/UserAction.hpp" // Canvas::Event
-#include "../include/ui/menus/UImenus.hpp"
+#include "ui/menus/menus-fwd.hpp"
 #include "../include/common/consts.hpp"
 #include "../include/utils/overloaded.hpp"
 #include <SFML/Window/Keyboard.hpp>
@@ -77,7 +77,7 @@ auto UIHandler::handle_on_satisfy(Canvas::Event const &event)
       std::visit(Overload{[event](auto &menu) -> maybe_event_menu {
                             return menu.handle(event);
                           },
-                          [](std::nullopt_t) -> maybe_event_menu {
+                          [](std::monostate) -> maybe_event_menu {
                             return {};
                           }},
                  m_ui_mode);

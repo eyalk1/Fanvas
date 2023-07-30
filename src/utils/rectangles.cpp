@@ -1,5 +1,5 @@
-#include "../include/rectangles.hpp"
-#include "../include/setting.hpp"
+#include "utils/rectangles.hpp"
+#include "common/setting.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <cmath>
 #include <vector>
