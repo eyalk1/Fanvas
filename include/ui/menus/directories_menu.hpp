@@ -1,5 +1,6 @@
 #pragma once
 #include "ui/menus/menus-fwd.hpp"
+#include <SFML/Window/Event.hpp>
 namespace Canvas {
 
 // v-split: left is list of open directories, right is a directory picker
@@ -7,8 +8,9 @@ namespace Canvas {
 // mode 1: just a text box with completions
 // mode 2: ranger style w/ arrows
 // newMenuWindow(vsplit(getDirList(), searchBox()))
-struct directories_menu {
-  maybe_event_menu handle(Canvas::Event e);
+struct DirectoriesMenu {
+  std::optional<Canvas::Event> handle(Canvas::Event e);
+  std::optional<Canvas::Event> sf_event2canvas_event(sf::Event e);
 };
 
 } // namespace Canvas

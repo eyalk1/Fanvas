@@ -1,8 +1,10 @@
 #ifndef UIHANDLER__HPP
 #define UIHANDLER__HPP
 #include "UserAction.hpp"
+#include "ui/canvas.hpp"
 #include "common/consts.hpp"
 #include "ui/code-blocks/CodeBlockManager.hpp"
+#include "ui/menus/menus-fwd.hpp"
 #include "ui/menus/menus.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
@@ -27,7 +29,7 @@ private:
   auto handle_event(Canvas::Event const &event) -> void;
 
   // process generic sf event - turning it into a canvas event
-  auto handle_sf_event(sf::Event event) -> std::optional<Canvas::Event>;
+  auto sf_event2canvas_event(sf::Event event) -> std::optional<Canvas::Event>;
 
   // take specific sf event and 1: return events for the external world, 2:
   // handle internal affects. this could be only no.1 but sending an event that
@@ -54,7 +56,8 @@ private:
   // possible menus and screens are: search for function and/or add function,
   // manage directories - add/remove, settings(e.g. try to hijack lsp or diy?
   // colors?), choose workspace, canvas, menu picker
-  Menus m_ui_mode;
+  MenusHandler m_ui_mode;
+  CanvasManager m_canvas;
 
   CodeBlocksManager m_block_manager;
   BlockSet m_curr_hover;

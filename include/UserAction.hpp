@@ -70,17 +70,7 @@ struct open_repo {
 using AppAction = std::variant<close_app, open_repo>;
 
 //~~~~~~~~~~~~~~~User Commands~~~~~~~~~~~~~~~~~~~
-struct Event {
-  using data_t = std::variant<WindowAction, AppAction>;
-  operator data_t&() { return data; }
-  Entities recipient_hint;
-  Event(data_t _data, Entities hint = Entities::NO_ONE)
-      : recipient_hint(hint), data(_data){};
-
-private:
-  std::variant<WindowAction, AppAction> data;
-};
-
+using Event = std::variant<WindowAction, AppAction>;
 using AppCmd = std::array<std::optional<Canvas::Event>,
                           MAX_NUMBER_OF_APP_ACTIONS_PER_UI_EVENT>;
 

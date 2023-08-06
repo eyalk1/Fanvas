@@ -5,14 +5,15 @@
 #include <variant>
 namespace Canvas {
 
-struct main_menu;
-struct directories_menu;
-struct settings_menu;
-struct find_menu;
-struct workspace_menu;
+struct MainMenu;
+struct DirectoriesMenu;
+struct SettingsMenu;
+struct FindMenu;
+struct WorkspaceMenu;
 
-using Menus = std::variant<main_menu, directories_menu, settings_menu,
-                           find_menu, workspace_menu, std::monostate>;
+using Menus = std::variant<MainMenu, DirectoriesMenu, SettingsMenu, FindMenu,
+                           WorkspaceMenu>;
+using MenusHandler = std::optional<Menus>;
 using maybe_event_menu = std::pair<std::optional<Canvas::Event>, Menus>;
 
 } // namespace Canvas
