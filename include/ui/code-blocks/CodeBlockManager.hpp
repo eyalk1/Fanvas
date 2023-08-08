@@ -1,8 +1,8 @@
 #pragma once
+#include "bit_set/bit_set.hpp"
+#include "common/consts.hpp"
 #include "ui/code-blocks/CodeBlock.hpp"
 #include "utils/utility.hpp"
-#include "common/consts.hpp"
-#include "bit_set/bit_set.hpp"
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <array>
@@ -12,7 +12,7 @@
 #include <stack>
 
 namespace Canvas {
-//TODO: make template taking amount of windows?
+// TODO: make template taking amount of windows?
 class CodeBlocksManager : public sf::Drawable {
 private:
   using maybe_window = std::optional<CodeBlock>;
@@ -35,6 +35,7 @@ public:
   auto deleteCodeBlock(BlockSet windows) -> void;
 
   auto get_all_windows() -> BlockSet;
+
 private:
   auto findOpenspace(sf::Vector2f rec_size, BlockSet available_windows)
       -> sf::Vector2f;
@@ -49,8 +50,7 @@ template <CodeBlocksManager::actions Actions> consteval auto action2function();
 
 // IMPLEMENTATIONS
 
-auto CodeBlocksManager::findBlocks(auto predicate) const
-    -> BlockSet {
+auto CodeBlocksManager::findBlocks(auto predicate) const -> BlockSet {
   int i = 0;
   BlockSet ret;
   for (auto const &window : m_windows) {
@@ -67,8 +67,7 @@ auto CodeBlocksManager::apply(BlockSet windows, Args &&...args) -> void {
               std::forward<Args>(args)...);
 }
 
-template <CodeBlocksManager::actions Actions>
-consteval auto action2function() {
+template <CodeBlocksManager::actions Actions> consteval auto action2function() {
   if constexpr (Actions == CodeBlocksManager::actions::decorate) {
     return &CodeBlock::decorate;
   } else if constexpr (Actions == CodeBlocksManager::actions::move) {

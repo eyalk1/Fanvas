@@ -1,7 +1,6 @@
-#include "../include/TextWindow.hpp"
-#include "../include/rectangles.hpp"
-#include "../include/setting.hpp"
-
+#include "ui/code-blocks/CodeBlock.hpp"
+#include "common/setting.hpp"
+#include "utils/rectangles.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -25,7 +24,8 @@ auto CodeBlock::draw(sf::RenderTarget &target, sf::RenderStates states) const
 auto CodeBlock::contains(sf::Vector2i pos) const -> bool {
   auto diff = getPosition();
   auto fpos = sf::Vector2f(pos);
-  return m_border.getGlobalBounds().contains({fpos.x - diff.x, fpos.y - diff.y});
+  return m_border.getGlobalBounds().contains(
+      {fpos.x - diff.x, fpos.y - diff.y});
 }
 
 auto CodeBlock::getGlobalBounds() const -> sf::FloatRect {
@@ -34,8 +34,7 @@ auto CodeBlock::getGlobalBounds() const -> sf::FloatRect {
   return {pos.x, pos.y, bounds.width, bounds.height};
 }
 
-auto CodeBlock::decorate(size_t decoration_filter, size_t to_decorate)
-    -> void {
+auto CodeBlock::decorate(size_t decoration_filter, size_t to_decorate) -> void {
   if (decoration_filter & decorations::highlight) {
     m_border.setOutlineColor(to_decorate & decorations::highlight
                                  ? sf::Color::Red

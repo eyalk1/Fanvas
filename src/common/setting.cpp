@@ -1,4 +1,4 @@
-#include "../include/setting.hpp"
+#include "common/setting.hpp"
 
 namespace Canvas {
 auto SetSettings() -> Settings & {

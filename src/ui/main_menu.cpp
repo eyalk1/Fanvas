@@ -2,15 +2,19 @@
 #include "ui/menus/menus.hpp"
 #include "utils/utility.hpp"
 #include <iostream>
+#include <optional>
 
 namespace Canvas {
-main_menu::main_menu() { std::cout << main_menu::text << std::endl; }
-maybe_event_menu main_menu::handle(Canvas::Event e) {
-    UNUSED(e);
-    (void)e;
+MainMenu::MainMenu() { std::cout << MainMenu::text << std::endl; }
+std::optional<Canvas::Event> MainMenu::handle(Canvas::Event e) {
+  (void)e;
   // switch (e) {
-  
+
   // }
-    return {};
- }
+  return {};
+}
+std::optional<Canvas::Event> MainMenu::sf_event2canvas_event(sf::Event e){
+    (void)e;
+    return{};
+  }
 } // namespace Canvas
