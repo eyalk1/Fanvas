@@ -30,8 +30,8 @@ public:
   auto draw(sf::RenderTarget &target, sf::RenderStates states) const
       -> void override;
 
-  auto getGlobalBounds() const -> sf::FloatRect;
-  auto contains(sf::Vector2i) const -> bool;
+  [[nodiscard]] auto getGlobalBounds() const -> sf::FloatRect;
+  [[nodiscard]] auto contains(sf::Vector2i) const -> bool;
   auto decorate(size_t decoration_filter, size_t to_decorate) -> void;
 
 private:

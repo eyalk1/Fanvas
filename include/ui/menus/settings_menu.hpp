@@ -7,7 +7,7 @@ namespace Canvas {
 // list of settings with their values
 // whenyou click a settings you can modify the value
 struct SettingsMenu {
-  std::optional<Canvas::Event> handle(Canvas::Event e);
-  std::optional<Canvas::Event> sf_event2canvas_event(sf::Event e);
+  [[nodiscard]] std::optional<Canvas::Event> handle(Canvas::Event e);
+  [[nodiscard]] std::optional<Canvas::Event> sf_event2canvas_event(sf::Event e);
 };
 } // namespace Canvas

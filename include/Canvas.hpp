@@ -17,7 +17,7 @@ public:
   auto handle_event(Canvas::Event const &) -> void;
 
 private:
-  void handle_hint(Canvas::Event const &);
+  auto handle_hint(Canvas::Event const &) -> void;
   // std::array<event_generator, 1> eventers;
   UIHandler m_ui;
   CircularQ::circularQueue<Canvas::Event, MAX_NUMBER_OF_EVENTS> m_event_queue;

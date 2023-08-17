@@ -28,16 +28,16 @@ public:
   auto newCodeBlock(sf::String &&header, sf::String &&source)
       -> CodeBlock const &;
   // give a predicate return all the windows that satisfy it
-  auto findBlocks(auto p) const -> BlockSet;
+  [[nodiscard]] auto findBlocks(auto p) const -> BlockSet;
   // apply an action to all the windows in the set
   template <CodeBlocksManager::actions TO_DO, typename... Args>
   auto apply(BlockSet windows, Args &&...args) -> void;
   auto deleteCodeBlock(BlockSet windows) -> void;
 
-  auto get_all_windows() -> BlockSet;
+  [[nodiscard]] auto get_all_windows() -> BlockSet;
 
 private:
-  auto findOpenspace(sf::Vector2f rec_size, BlockSet available_windows)
+  [[nodiscard]] auto findOpenspace(sf::Vector2f rec_size, BlockSet available_windows)
       -> sf::Vector2f;
 };
 
