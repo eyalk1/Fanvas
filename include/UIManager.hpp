@@ -2,12 +2,10 @@
 #define UIHANDLER__HPP
 #include "UserAction.hpp"
 #include "ui/canvas.hpp"
-#include "common/consts.hpp"
-#include "ui/code-blocks/CodeBlockManager.hpp"
-#include "ui/menus/menus-fwd.hpp"
 #include "ui/menus/menus.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
+#include <iterator>
 #include <string>
 #include <string_view>
 
@@ -17,39 +15,30 @@ struct UIHandler {
   [[nodiscard]] auto is_window_open() -> bool;
   // this function checks internal state to see if there is an event that the UI
   // produces e.g. user requested to add a directory for pulling functions from
-  [[nodiscard]] auto generate_event() -> std::optional<Canvas::Event>;
+  // if we handle the event here when we return it
+  //(others might want to react as well)
+  // we need to make sure that we don't react again.
+  // since the event handling is hierarchial the way we would note the
+  // unreacting component has to be hierarchial as well.
+  // thus implementing is too complicated and hence it is not implemented.
+  // we react only through the handle API.
+  auto generate_event(std::output_iterator<Canvas::Event> auto to_push) -> void;
   // check if the event is handelable by the uihandler if so - handle
-  [[nodiscard]] auto handle_on_satisfy(Canvas::Event const &event)
-      -> std::optional<Canvas::Event>;
+  auto handle_on_satisfy(std::input_iterator auto event_begin,
+                         std::input_iterator auto event_end,
+                         std::output_iterator<Canvas::Event> auto to_push)
+      -> void;
   UIHandler();
 
 private:
-  enum surface { canvas, block, selected_block };
   // through this function we handle events from the outside
   auto handle_event(Canvas::Event const &event) -> void;
 
   // process generic sf event - turning it into a canvas event
-  [[nodiscard]] auto sf_event2canvas_event(sf::Event event) -> std::optional<Canvas::Event>;
+  auto sf_event2canvas_event(sf::Event event,
+                             std::output_iterator<Canvas::Event> auto to_push)
+      -> void;
 
-  // take specific sf event and 1: return events for the external world, 2:
-  // handle internal affects. this could be only no.1 but sending an event that
-  // you know you're gonna handle is stupid
-  [[nodiscard]] auto handle_keypress(sf::Event::KeyEvent event)
-      -> std::optional<Canvas::Event>;
-  [[nodiscard]] auto handle_mouse_press(sf::Event::MouseButtonEvent mouse)
-      -> std::optional<Canvas::Event>;
-  [[nodiscard]] auto handle_mouse_release(sf::Event::MouseButtonEvent mouse)
-      -> std::optional<Canvas::Event>;
-  [[nodiscard]] auto handle_mouse_move(sf::Event::MouseMoveEvent mouse)
-      -> std::optional<Canvas::Event>;
-  [[nodiscard]] auto mouse_press_to_actions(bool is_ctrl, surface on, BlockSet clicked_block)
-      -> std::optional<Canvas::Event>;
-
-  // handle actual dispatching of the internal events
-  auto update_mouse_hover(sf::Event::MouseMoveEvent mouse) -> void;
-  auto add_block(std::string_view header, std::string_view source) -> void;
-  auto select_block(BlockSet clicked, BlockSet last = {}) -> void;
-  auto highlight_block(BlockSet clicked, BlockSet last = {}) -> void;
   std::string title;
   sf::RenderWindow m_render_window;
 
@@ -58,13 +47,56 @@ private:
   // colors?), choose workspace, canvas, menu picker
   MenusHandler m_ui_mode;
   CanvasManager m_canvas;
-
-  CodeBlocksManager m_block_manager;
-  BlockSet m_curr_hover;
-  BlockSet m_selected_blocks;
-  BlockSet m_highlight_block;
-  // utilities
-  [[nodiscard]] auto block_under_mouse(int x, int y) -> BlockSet;
 };
+} // namespace Canvas
+
+// implementations
+namespace Canvas {
+auto UIHandler::generate_event(std::output_iterator<Canvas::Event> auto to_push)
+    -> void {
+  sf::Event event;
+  if (!m_render_window.pollEvent(event)) {
+    return;
+  }
+  sf_event2canvas_event(event, to_push);
+}
+auto UIHandler::handle_on_satisfy(
+    std::input_iterator auto event_begin, std::input_iterator auto event_end,
+    std::output_iterator<Canvas::Event> auto to_push) -> void {
+  // TODO: fix bug - read events while pushing events!
+  for (; event_begin != event_end; event_begin++) {
+    auto &event = *event_begin;
+    m_ui_mode
+        ? std::visit([&event, &to_push](
+                         auto &menu) { return menu.handle(event, to_push); },
+                     *m_ui_mode)
+        : m_canvas.handle(event, to_push);
+  }
+}
+
+auto UIHandler::sf_event2canvas_event(
+    sf::Event event, std::output_iterator<Canvas::Event> auto to_push) -> void {
+  /* we merge the state of the ui handler and the event and output a canvas
+   * event.
+   * This function does not dispatch! reasons:
+    1. only one function does dispatching
+    2. dispatch only upon Canvas::Event
+    3. send an event to other entities (e.g. when opening a menu - get lsp
+       status or any 3rd party info) - potentially asycn
+   */
+
+  /**
+   * click/keypress on menu - menu event
+   * click/keypress on canvas - window event
+   *
+   **/
+  // std::optional<Canvas::Event> e =
+  return m_ui_mode ? std::visit(
+                         [to_push, event](auto &menu) {
+                           return menu.sf_event2canvas_event(event, to_push);
+                         },
+                         *m_ui_mode)
+                   : m_canvas.sf_event2canvas_event(event, to_push);
+}
 } // namespace Canvas
 #endif // UIHANDLER__HPP

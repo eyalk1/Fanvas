@@ -1,7 +1,9 @@
 #pragma once
 
-#include "utils/rectangles.hpp"
+#include "common/consts.hpp"
 #include "common/setting.hpp"
+#include "utils/rectangles.hpp"
+#include "bit_set/bit_set.hpp"
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -20,6 +22,7 @@ enum decorations : size_t {
   select = 1 << 2,
   highlight = 1 << 4,
 };
+
 
 constexpr auto SELECTED_THICKNESS = 4;
 constexpr auto DEFAULT_THICKNESS = 1;

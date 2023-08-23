@@ -1,14 +1,13 @@
 #include "ui/canvas.hpp"
-
-#include <optional>
-
+#include <string_view>
 namespace Canvas {
-std::optional<Canvas::Event> CanvasManager::sf_event2canvas_event(sf::Event const &e) {
-  (void)e;
-  return {};
+auto CanvasManager::block_under_mouse(int x, int y) -> BlockSet {
+  return m_block_manager.findBlocks([=](auto const &block_in_question) {
+    return block_in_question.contains({x, y});
+  });
 }
-std::optional<Canvas::Event> CanvasManager::handle(Canvas::Event const &e) {
-  (void)e;
-  return {};
+void CanvasManager::add_block(std::string_view header,
+                              std::string_view source) {
+  m_block_manager.newCodeBlock(std::string(header), std::string(source));
 }
 } // namespace Canvas

@@ -6,15 +6,4 @@
 
 namespace Canvas {
 MainMenu::MainMenu() { std::cout << MainMenu::text << std::endl; }
-std::optional<Canvas::Event> MainMenu::handle(Canvas::Event e) {
-  (void)e;
-  // switch (e) {
-
-  // }
-  return {};
-}
-std::optional<Canvas::Event> MainMenu::sf_event2canvas_event(sf::Event e){
-    (void)e;
-    return{};
-  }
 } // namespace Canvas

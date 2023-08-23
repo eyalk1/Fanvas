@@ -4,3 +4,7 @@
 .sconsign.dblite
 compile_commands.json
 gcm.cache
+*.a1
+*.s1
+*.plist
+

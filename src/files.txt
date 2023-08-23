@@ -1,0 +1,13 @@
+Canvas.a1::src/Canvas.cpp
+UIManager.a1::src/UIManager.cpp
+setting.a1::src/common/setting.cpp
+main.a1::src/main.cpp
+CodeBlock.a1::src/ui/CodeBlock.cpp
+CodeBlockManager.a1::src/ui/CodeBlockManager.cpp
+canvas.a1::src/ui/canvas.cpp
+directories_menu.a1::src/ui/directories_menu.cpp
+find_menu.a1::src/ui/find_menu.cpp
+main_menu.a1::src/ui/main_menu.cpp
+settings_menu.a1::src/ui/settings_menu.cpp
+workspace_menu.a1::src/ui/workspace_menu.cpp
+rectangles.a1::src/utils/rectangles.cpp

@@ -36,17 +36,17 @@ auto CodeBlock::getGlobalBounds() const -> sf::FloatRect {
 
 auto CodeBlock::decorate(size_t decoration_filter, size_t to_decorate) -> void {
   if (decoration_filter & decorations::highlight) {
-    m_border.setOutlineColor(to_decorate & decorations::highlight
+    m_border.setOutlineColor((to_decorate & decorations::highlight)
                                  ? sf::Color::Red
                                  : sf::Color::White);
   }
   if (decoration_filter & decorations::hover) {
-    m_border.setFillColor(to_decorate & decorations::hover
+    m_border.setFillColor((to_decorate & decorations::hover)
                               ? sf::Color(128, 128, 128, 128)
                               : sf::Color::Transparent);
   }
   if (decoration_filter & decorations::select) {
-    m_border.setOutlineThickness(to_decorate & decorations::select
+    m_border.setOutlineThickness((to_decorate & decorations::select)
                                      ? SELECTED_THICKNESS
                                      : DEFAULT_THICKNESS);
   }

@@ -9,8 +9,21 @@ namespace Canvas {
 // mode 2: ranger style w/ arrows
 // newMenuWindow(vsplit(getDirList(), searchBox()))
 struct DirectoriesMenu {
-  [[nodiscard]] std::optional<Canvas::Event> handle(Canvas::Event e);
-  [[nodiscard]] std::optional<Canvas::Event> sf_event2canvas_event(sf::Event e);
+  void handle(Canvas::Event e,
+              std::output_iterator<Canvas::Event> auto to_push);
+  void sf_event2canvas_event(sf::Event e,
+                             std::output_iterator<Canvas::Event> auto to_push);
 };
+// implementations
+void DirectoriesMenu::handle(Canvas::Event e,
+                             std::output_iterator<Canvas::Event> auto to_push) {
+  (void)to_push;
+  (void)e;
+}
+void DirectoriesMenu::sf_event2canvas_event(
+    sf::Event e, std::output_iterator<Canvas::Event> auto to_push) {
+  (void)to_push;
+  (void)e;
+}
 
 } // namespace Canvas

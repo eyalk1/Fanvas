@@ -9,7 +9,20 @@ struct MainMenu {
       "d: manage directories\ns: settings\nq: quit and save\nw: open "
       "workspace\nf: find functions";
   MainMenu();
-  [[nodiscard]] std::optional<Canvas::Event> handle(Canvas::Event e);
-  [[nodiscard]] std::optional<Canvas::Event> sf_event2canvas_event(sf::Event e);
+  void handle(Canvas::Event e,
+              std::output_iterator<Canvas::Event> auto to_push);
+  void sf_event2canvas_event(sf::Event e,
+                             std::output_iterator<Canvas::Event> auto to_push);
 };
+// implementations
+void MainMenu::handle(Canvas::Event e,
+                      std::output_iterator<Canvas::Event> auto to_push) {
+  (void)to_push;
+  (void)e;
+}
+void MainMenu::sf_event2canvas_event(
+    sf::Event e, std::output_iterator<Canvas::Event> auto to_push) {
+  (void)to_push;
+  (void)e;
+}
 } // namespace Canvas

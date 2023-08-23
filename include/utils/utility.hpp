@@ -1,7 +1,9 @@
 #ifndef CANVAS_UTILITY__HPP
 #define CANVAS_UTILITY__HPP
 
+#include <array>
 #include <functional>
+#include <optional>
 #include <type_traits>
 #include <utility>
 #include <variant>
@@ -14,12 +16,15 @@
 
 #define UNUSED(var) "(void)var"
 
+template <typename T, std::size_t N>
+using optarray = std::array<std::optional<T>, N>;
+
 template <typename CONTAINER, typename Func, typename... Args>
-auto for_each_optional(CONTAINER const &thing, Func const &f, Args &&...args)
+auto for_each_optional(CONTAINER const &container, Func const &function, Args &&...args)
     -> void {
-  for (auto const &t : thing)
-    if (t)
-      std::invoke(f, t, std::forward<Args>(args)...);
+  for (auto const &element : container)
+    if (element)
+      std::invoke(function, *element, std::forward<Args>(args)...);
 }
 
 template <typename SETINDEX, typename SET, typename FUNC, typename... Args>

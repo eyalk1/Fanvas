@@ -1,54 +1,46 @@
 #include "Canvas.hpp"
-#include "ui/code-blocks/CodeBlock.hpp"
 #include "UserAction.hpp"
-#include "utils/overloaded.hpp"
 #include "common/consts.hpp"
 #include "common/setting.hpp"
+#include "ui/code-blocks/CodeBlock.hpp"
+#include "utils/overloaded.hpp"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <iostream>
+#include <iterator>
 #include <utility>
 
 namespace Canvas {
 
-EventDistributer::EventDistributer() : m_ui(), m_event_queue() {}
-
 auto EventDistributer::run() -> void {
+  std::vector<Canvas::Event> event_queue1, event_queue2;
+  auto *write_events = &event_queue1;
+  auto *read_events = &event_queue2;
+  // main loop
   while (m_ui.is_window_open()) {
     // for each member that can generate an event - generate and add the event
-    // to the queue
-    add_event(m_ui.generate_event());
+    // to the queue.
+    // Giving the generators an iterator through which they will
+    // insert is sortof a DIY RVO - we know that the returned value will be
+    // place into the queue.
+    auto back = std::back_inserter(*write_events);
+    m_ui.generate_event(back);
     TODO(add_event(m_lsp.generate_event()));
     // empty the queue syncronicly - if things take time put a timer here and
     // let it run in the background or something - in the future
-    while (!m_event_queue.empty()) {
-      auto event = m_event_queue.front();
-      handle_event(event);
-      m_event_queue.pop();
+    if (!read_events->empty()) {
+      handle_event(read_events->cbegin(), read_events->cend(), back);
     }
+    read_events->clear();
+    std::swap(write_events, read_events);
   }
 }
 
-auto EventDistributer::add_event(std::optional<Canvas::Event> &&event) -> bool {
-  return event ? m_event_queue.emplace(*event) : false;
-}
-
-auto EventDistributer::handle_event(Canvas::Event const &event) -> void {
-  add_event(m_ui.handle_on_satisfy(event));
+auto EventDistributer::handle_event(
+    std::input_iterator auto event_begin, std::input_iterator auto event_end,
+    std::back_insert_iterator<std::vector<Canvas::Event>> back) -> void {
+  m_ui.handle_on_satisfy(event_begin, event_end, back);
   TODO(add_event(m_lsp.handle_on_satisfy(event)));
 }
-
-// auto EventDistributer::handle_app_action(AppAction action) -> void {
-//   auto ov = Overload{[this](close_app action) {
-//                        (void)action;
-//                        this->m_render_window.close();
-//                      },
-//                      [this](open_repo action) { this->open_dir(action.path);
-//                      },
-//     [this](findFunction action){
-
-//       }};
-//   std::visit(ov, action);
-// }
 
 } // namespace Canvas

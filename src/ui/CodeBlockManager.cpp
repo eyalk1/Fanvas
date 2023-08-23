@@ -54,8 +54,8 @@ auto CodeBlocksManager::deleteCodeBlock(BlockSet windows) -> void {
 auto CodeBlocksManager::draw(sf::RenderTarget &target,
                              sf::RenderStates states) const -> void {
   for_each_optional(m_windows, [&target, &states](auto const &window) {
-    states.transform = window->getTransform();
-    target.draw(*window, states);
+    states.transform = window.getTransform();
+    target.draw(window, states);
   });
 }
 

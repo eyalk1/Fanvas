@@ -8,55 +8,14 @@
 namespace Canvas {
 
 // ~~~~~~~~~~~~~~~~~~window commands~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// TODO: moveto only variant without inheritence
-struct window_command {
-  // MUST BE EMPTY SO WE WON'T USE VIRTUAL INHERITANCE!!
+struct DecorationCmd {
+  BlockSet hover;
+  BlockSet dehover;
+  BlockSet select;
+  BlockSet deselect;
+  BlockSet highlight;
+  BlockSet dehighlight;
 };
-struct window_apply_command : public window_command {
-  window_apply_command(BlockSet _set) : set(_set) {}
-  BlockSet set;
-};
-struct window_unapply_command : public window_command {
-  window_unapply_command(BlockSet _unset) : unset(_unset) {}
-  BlockSet unset;
-};
-struct window_set_command : public window_apply_command,
-                            public window_unapply_command {
-  window_set_command(BlockSet _set, BlockSet _unset)
-      : window_apply_command(_set), window_unapply_command(_unset) {}
-  using window_apply_command::set;
-  using window_unapply_command::unset;
-};
-// concrete window commands
-struct hover_window : public window_set_command {
-  hover_window(BlockSet _set, BlockSet _unset)
-      : window_set_command(_set, _unset) {}
-};
-struct add_select_window : public window_apply_command {
-  add_select_window(BlockSet _set) : window_apply_command(_set) {}
-};
-struct deselect_window : public window_unapply_command {
-  deselect_window(BlockSet _unset) : window_unapply_command(_unset) {}
-};
-struct set_select_window : public window_set_command {
-  set_select_window(BlockSet _set, BlockSet _unset)
-      : window_set_command(_set, _unset) {}
-};
-struct set_highlight_window : public window_set_command {
-  set_highlight_window(BlockSet _set, BlockSet _unset)
-      : window_set_command(_set, _unset) {}
-};
-struct add_window : public window_command {
-  std::string_view header, source;
-};
-struct move_windows : public window_apply_command {
-  move_windows(BlockSet _set) : window_apply_command(_set) {}
-  sf::Vector2f diff{};
-};
-using WindowAction =
-    std::variant<hover_window, add_select_window, deselect_window,
-                 set_select_window, set_highlight_window, add_window,
-                 move_windows>;
 
 //~~~~~~~~~~~~~~~~~App commands~~~~~~~~~~~~~~~~~~~~~
 
@@ -70,7 +29,7 @@ struct open_repo {
 using AppAction = std::variant<close_app, open_repo>;
 
 //~~~~~~~~~~~~~~~User Commands~~~~~~~~~~~~~~~~~~~
-using Event = std::variant<WindowAction, AppAction>;
+using Event = std::variant<DecorationCmd, AppAction>;
 using AppCmd = std::array<std::optional<Canvas::Event>,
                           MAX_NUMBER_OF_APP_ACTIONS_PER_UI_EVENT>;
 

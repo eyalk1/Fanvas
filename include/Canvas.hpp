@@ -1,25 +1,23 @@
 #pragma once
-// #include "CommonHandler.hpp"
 #include "UIManager.hpp"
 #include "common/consts.hpp"
-namespace CircularQ {
-#include "circularQueue/circularQueue.hpp"
+namespace std {
+template <typename T> class optional;
 }
-#include <optional>
 
 namespace Canvas {
 // not sure what does this do - maybe will get deleted
 class EventDistributer {
 public:
-  EventDistributer();
   auto run() -> void;
-  auto add_event(std::optional<Canvas::Event>&& event) -> bool;
-  auto handle_event(Canvas::Event const &) -> void;
+  auto add_event(std::optional<Canvas::Event> &&event) -> void;
+  auto handle_event(std::input_iterator auto event_begin,
+                    std::input_iterator auto event_end,
+                    std::back_insert_iterator<std::vector<Canvas::Event>> back)
+      -> void;
 
 private:
   auto handle_hint(Canvas::Event const &) -> void;
-  // std::array<event_generator, 1> eventers;
   UIHandler m_ui;
-  CircularQ::circularQueue<Canvas::Event, MAX_NUMBER_OF_EVENTS> m_event_queue;
 };
 } // namespace Canvas
