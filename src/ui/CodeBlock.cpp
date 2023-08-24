@@ -1,6 +1,8 @@
 #include "ui/code-blocks/CodeBlock.hpp"
+#include "UserAction.hpp"
 #include "common/setting.hpp"
 #include "utils/rectangles.hpp"
+#include "utils/utility.hpp"
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Rect.hpp>

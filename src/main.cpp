@@ -9,8 +9,6 @@
 using namespace Canvas;
 
 int main() {
-  EventDistributer app;
-  sf::Clock glob_time;
-  app.run();
+  EventDistributer().run();
   return 0;
 }

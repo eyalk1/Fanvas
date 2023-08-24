@@ -12,7 +12,6 @@
 #include <stack>
 
 namespace Canvas {
-// TODO: make template taking amount of windows?
 class CodeBlocksManager : public sf::Drawable {
 private:
   using maybe_window = std::optional<CodeBlock>;

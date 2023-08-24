@@ -1,9 +1,9 @@
 #pragma once
 
+#include "bit_set/bit_set.hpp"
 #include "common/consts.hpp"
 #include "common/setting.hpp"
 #include "utils/rectangles.hpp"
-#include "bit_set/bit_set.hpp"
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -16,13 +16,13 @@
 
 namespace Canvas {
 
+// TODO: delete nothing - use deselect like everywhere else
 enum decorations : size_t {
-  nothing = 1,
+  select = 0,
   hover = 1 << 1,
-  select = 1 << 2,
-  highlight = 1 << 4,
+  highlight = 1 << 2,
+  nothing
 };
-
 
 constexpr auto SELECTED_THICKNESS = 4;
 constexpr auto DEFAULT_THICKNESS = 1;

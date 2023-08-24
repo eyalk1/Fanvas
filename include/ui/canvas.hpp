@@ -1,10 +1,12 @@
 #pragma once
 #include "UserAction.hpp"
 #include "code-blocks/CodeBlockManager.hpp"
+#include "utils/overloaded.hpp"
 #include <SFML/Window/Event.hpp>
+#include <cmath>
+#include <type_traits>
 
 namespace Canvas {
-
 struct CanvasManager {
   auto sf_event2canvas_event(sf::Event const &event,
                              std::output_iterator<Canvas::Event> auto to_push)
@@ -38,9 +40,7 @@ struct CanvasManager {
                           std::output_iterator<Canvas::Event> auto to_push)
       -> void;
   auto add_block(std::string_view header, std::string_view source) -> void;
-  auto
-  decorate_block(optarray<std::tuple<decorations, BlockSet, BlockSet>, 3> decs,
-                 std::output_iterator<Canvas::Event> auto to_push) -> void;
+  auto decorate_blocks(DecorationCmd) -> void;
   // auto select_block(std::output_iterator<Canvas::Event> auto to_push,
   //                   BlockSet clicked, BlockSet last = {}) -> void;
   // auto highlight_block(std::output_iterator<Canvas::Event> auto to_push,
@@ -64,8 +64,6 @@ struct CanvasManager {
 #include <iterator>
 
 namespace Canvas {
-using decoration = std::tuple<decorations, BlockSet, BlockSet>;
-using decoration_set = optarray<decoration, 3>;
 auto CanvasManager::sf_event2canvas_event(
     sf::Event const &event, std::output_iterator<Canvas::Event> auto to_push)
     -> void {
@@ -93,8 +91,13 @@ auto CanvasManager::sf_event2canvas_event(
 auto CanvasManager::handle(Canvas::Event const &e,
                            std::output_iterator<Canvas::Event> auto to_push)
     -> void {
-  (void)e;
-  (void)to_push;
+  std::visit(Overload{// decorate if it's a decorations cmd
+                      [this, to_push](DecorationCmd const &to_dec) {
+                        decorate_blocks(to_dec);
+                      },
+                      // do nothing on any other command
+                      [](auto &anything) { (void)anything; }},
+             e);
 }
 auto CanvasManager::handle_keypress(
     sf::Event::KeyEvent event, std::output_iterator<Canvas::Event> auto to_push)
@@ -148,20 +151,16 @@ auto CanvasManager::mouse_press_to_actions(
     case block:
       m_selected_blocks.insert_range(clicked_block);
       m_highlight_block = clicked_block;
-      decorate_block(
-          decoration_set{decoration{decorations::select, clicked_block, {}},
-                         decoration{decorations::highlight, clicked_block,
-                                    last_highlight}},
-          to_push);
+      to_push = DecorationCmd()
+                    .select(clicked_block)
+                    .highlight(clicked_block)
+                    .dehighlight(last_highlight);
       break;
     case selected_block:
       m_selected_blocks -= clicked_block;
       m_highlight_block = clicked_block;
-      decorate_block(
-          decoration_set{
-              decoration{decorations::select, {}, clicked_block},
-              decoration{decorations::highlight, {}, last_highlight}},
-          to_push);
+      to_push =
+          DecorationCmd().deselect(clicked_block).dehighlight(last_highlight);
     default:
       break;
     }
@@ -171,10 +170,10 @@ auto CanvasManager::mouse_press_to_actions(
       // two lines just to merge two bit_sets wtf
       BlockSet ret(clicked_block);
       ret.insert_range(m_selected_blocks);
-      decorate_block(decoration_set{decoration{decorations::select, {}, ret},
-                                    decoration{decorations::highlight,
-                                               BlockSet(), ~BlockSet()}},
-                     to_push);
+      to_push = DecorationCmd()
+                    .deselect(ret)
+                    .highlight(BlockSet())
+                    .dehighlight(~BlockSet());
     } break;
     case selected_block:
       break;
@@ -183,12 +182,11 @@ auto CanvasManager::mouse_press_to_actions(
       m_selected_blocks = clicked_block;
       last_highlight = m_highlight_block;
       m_highlight_block = clicked_block;
-      decorate_block(
-          decoration_set{
-              decoration{decorations::select, clicked_block, to_deselect},
-              decoration{decorations::highlight, m_highlight_block,
-                         last_highlight}},
-          to_push);
+      to_push = DecorationCmd()
+                    .select(clicked_block)
+                    .deselect(to_deselect)
+                    .highlight(m_highlight_block)
+                    .dehighlight(last_highlight);
     }
     default:
       break;
@@ -203,33 +201,6 @@ auto CanvasManager::update_mouse_hover(
   auto hovered_block = block_under_mouse(mouse.x, mouse.y);
   auto last_hovered = m_curr_hover == hovered_block ? BlockSet() : m_curr_hover;
   m_curr_hover = hovered_block;
-  decorate_block(decoration_set{decoration{decorations::hover, m_curr_hover,
-                                           last_hovered}},
-                 to_push);
+  to_push = DecorationCmd().hover(m_curr_hover).dehover(last_hovered);
 }
-auto CanvasManager::decorate_block(
-    decoration_set decs, std::output_iterator<Canvas::Event> auto to_push)
-    -> void {
-  DecorationCmd cmd{};
-  for_each_optional(decs, [&cmd](auto const &dec) {
-    switch (std::get<0>(dec)) {
-    case decorations::hover:
-      cmd.hover = std::get<1>(dec);
-      cmd.dehover = std::get<2>(dec);
-      break;
-    case decorations::highlight:
-      cmd.highlight = std::get<1>(dec);
-      cmd.dehighlight = std::get<2>(dec);
-      break;
-    case decorations::select:
-      cmd.select = std::get<1>(dec);
-      cmd.deselect = std::get<2>(dec);
-      break;
-    default:
-      break;
-    }
-  });
-  to_push = cmd;
-}
-
 } // namespace Canvas

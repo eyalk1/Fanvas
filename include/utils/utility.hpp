@@ -16,9 +16,6 @@
 
 #define UNUSED(var) "(void)var"
 
-template <typename T, std::size_t N>
-using optarray = std::array<std::optional<T>, N>;
-
 template <typename CONTAINER, typename Func, typename... Args>
 auto for_each_optional(CONTAINER const &container, Func const &function, Args &&...args)
     -> void {
