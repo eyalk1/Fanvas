@@ -36,21 +36,21 @@ auto CodeBlock::getGlobalBounds() const -> sf::FloatRect {
   return {pos.x, pos.y, bounds.width, bounds.height};
 }
 
-auto CodeBlock::decorate(size_t decoration_filter, size_t to_decorate) -> void {
-  if (decoration_filter & decorations::highlight) {
-    m_border.setOutlineColor((to_decorate & decorations::highlight)
-                                 ? sf::Color::Red
-                                 : sf::Color::White);
+auto CodeBlock::decorate(std::size_t decoration) -> void {
+  if (decoration & decorations::highlight) {
+    m_border.setOutlineColor(sf::Color::Red);
+  } else if (decoration & decorations::dehighlight) {
+    m_border.setOutlineColor(sf::Color::White);
   }
-  if (decoration_filter & decorations::hover) {
-    m_border.setFillColor((to_decorate & decorations::hover)
-                              ? sf::Color(128, 128, 128, 128)
-                              : sf::Color::Transparent);
+  if (decoration & decorations::hover) {
+    m_border.setFillColor(sf::Color(128, 128, 128, 128));
+  } else if (decoration & decorations::dehover) {
+    m_border.setFillColor(sf::Color::Transparent);
   }
-  if (decoration_filter & decorations::select) {
-    m_border.setOutlineThickness((to_decorate & decorations::select)
-                                     ? SELECTED_THICKNESS
-                                     : DEFAULT_THICKNESS);
+  if (decoration & decorations::select) {
+    m_border.setOutlineThickness(SELECTED_THICKNESS);
+  } else if (decoration & decorations::deselect) {
+    m_border.setOutlineThickness(DEFAULT_THICKNESS);
   }
 }
 

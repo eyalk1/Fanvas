@@ -35,10 +35,6 @@ public:
   SettingsGetter(HeaderPartialSizeMul, uint, 1);
   SettingsGetter(HeaderPartialSizeDiv, uint, 2);
   SettingsGetter(Slack, float, 5);
-
-  // TODO make mouse pos a member of the App
-  SettingsSetter(MousePos, sf::Vector2i);
-  SettingsSetter(Time, sf::Time);
 };
 
 auto GetSettings() -> const Settings &;

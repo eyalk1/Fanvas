@@ -10,19 +10,19 @@ namespace Canvas {
 
 // ~~~~~~~~~~~~~~~~~~window commands~~~~~~~~~~~~~~~~~~~~~~~~~~~
 struct DecorationCmd {
-  std::array<BlockSet, 6> decs{};
+  std::array<BlockSet, decorations::number_of_decorations> decs{};
   BlockSet &select() { return decs[decorations::select]; };
-  BlockSet &deselect() { return decs[decorations::select + 1]; };
+  BlockSet &deselect() { return decs[decorations::deselect]; };
   BlockSet &highlight() { return decs[decorations::highlight]; };
-  BlockSet &dehighlight() { return decs[decorations::highlight + 1]; };
+  BlockSet &dehighlight() { return decs[decorations::dehighlight]; };
   BlockSet &hover() { return decs[decorations::hover]; };
-  BlockSet &dehover() { return decs[decorations::hover + 1]; };
+  BlockSet &dehover() { return decs[decorations::dehover]; };
   DecorationCmd &select(BlockSet val) {
     decs[decorations::select] = val;
     return *this;
   };
   DecorationCmd &deselect(BlockSet val) {
-    decs[decorations::select + 1] = val;
+    decs[decorations::deselect] = val;
     return *this;
   };
   DecorationCmd &highlight(BlockSet val) {
@@ -30,7 +30,7 @@ struct DecorationCmd {
     return *this;
   };
   DecorationCmd &dehighlight(BlockSet val) {
-    decs[decorations::highlight + 1] = val;
+    decs[decorations::dehighlight] = val;
     return *this;
   };
   DecorationCmd &hover(BlockSet val) {
@@ -38,7 +38,7 @@ struct DecorationCmd {
     return *this;
   };
   DecorationCmd &dehover(BlockSet val) {
-    decs[decorations::hover + 1] = val;
+    decs[decorations::dehover] = val;
     return *this;
   };
 };

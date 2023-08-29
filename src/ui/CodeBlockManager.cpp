@@ -1,4 +1,5 @@
 #include "bit_set/bit_set.hpp"
+#include "common/consts.hpp"
 #include "ui/code-blocks/CodeBlock.hpp"
 #include "ui/code-blocks/CodeBlockManager.hpp"
 #include "utils/utility.hpp"
@@ -60,16 +61,19 @@ auto CodeBlocksManager::draw(sf::RenderTarget &target,
 }
 
 auto CodeBlocksManager::findOpenspace(sf::Vector2f rec_size,
-                                      BlockSet available_windows)
+                                      BlockSet current_windows)
     -> sf::Vector2f {
   // no windows? no problem!
-  if (available_windows.empty())
+  if (current_windows.empty())
     return {0, 0};
+  // TODO: add error handling
+  if (current_windows.size() == MAX_NUMBER_OF_WINDOWS)
+    throw std::string("bug! use std::expected");
 
   auto const &slack = GetSettings().GetSlack();
   float min_x = INFINITY;
   float min_y = INFINITY;
-  for (auto window : available_windows) {
+  for (auto window : current_windows) {
     auto gb = m_windows[uint(window)]->getGlobalBounds();
     min_x = std::min(min_x, gb.left);
     min_y = std::min(min_y, gb.top);
@@ -78,7 +82,6 @@ auto CodeBlocksManager::findOpenspace(sf::Vector2f rec_size,
   // start the BFS
   CircularQ::circularQueue<sf::Vector2f, MAX_NUMBER_OF_WINDOWS + 1> candidates(
       sf::Vector2f{min_x + slack, min_y + slack});
-  // TODO: handle too many windows
   while (true) {
     // take a new candidate
     auto popped = candidates.front();
@@ -105,7 +108,7 @@ auto CodeBlocksManager::findOpenspace(sf::Vector2f rec_size,
     // intersections
     candidates.push(sf::Vector2f(candidate.left, max_y + slack));
     candidates.push(sf::Vector2f(max_x + slack, candidate.top));
-    available_windows -= intersects;
+    current_windows -= intersects;
   }
 }
 

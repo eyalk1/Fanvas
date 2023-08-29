@@ -18,10 +18,13 @@ namespace Canvas {
 
 // TODO: delete nothing - use deselect like everywhere else
 enum decorations : size_t {
-  select = 0,
-  hover = 1 << 1,
-  highlight = 1 << 2,
-  nothing
+  select,
+  deselect,
+  hover,
+  dehover,
+  highlight,
+  dehighlight,
+  number_of_decorations,
 };
 
 constexpr auto SELECTED_THICKNESS = 4;
@@ -35,7 +38,7 @@ public:
 
   [[nodiscard]] auto getGlobalBounds() const -> sf::FloatRect;
   [[nodiscard]] auto contains(sf::Vector2i) const -> bool;
-  auto decorate(size_t decoration_filter, size_t to_decorate) -> void;
+  auto decorate(std::size_t decoration_filter) -> void;
 
 private:
   sf::Text m_source;

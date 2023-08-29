@@ -14,9 +14,8 @@ void CanvasManager::add_block(std::string_view header,
 auto CanvasManager::decorate_blocks(DecorationCmd dec_cmd) -> void {
   std::underlying_type_t<decorations> dec_type = 0;
   for (auto windows_to_dec : dec_cmd.decs) {
-    m_block_manager.apply<CodeBlocksManager::decorate>(
-        windows_to_dec, dec_type,
-        dec_type % 2 == 0 ? dec_type : decorations::nothing);
+    m_block_manager.apply<CodeBlocksManager::decorate>(windows_to_dec,
+                                                       dec_type);
     dec_type++;
   }
 }

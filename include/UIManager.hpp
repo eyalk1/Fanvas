@@ -63,7 +63,6 @@ auto UIHandler::generate_event(std::output_iterator<Canvas::Event> auto to_push)
 auto UIHandler::handle_on_satisfy(
     std::input_iterator auto event_begin, std::input_iterator auto event_end,
     std::output_iterator<Canvas::Event> auto to_push) -> void {
-  // TODO: fix bug - read events while pushing events!
   for (; event_begin != event_end; event_begin++) {
     auto &event = *event_begin;
     m_ui_mode

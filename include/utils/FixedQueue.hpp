@@ -114,7 +114,7 @@ template <typename T, std::size_t N> struct FixedQueue {
     advance();
   }
   template <typename... insertT> decltype(auto) emplace_back(insertT &&...ts) {
-    // TODO: what if there is already an element
+    //overwrite
     c[end_ptr].emplace(std::forward<insertT...>(ts...));
     advance();
   }
