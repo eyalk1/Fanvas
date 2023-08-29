@@ -16,7 +16,6 @@
 
 namespace Canvas {
 
-// TODO: delete nothing - use deselect like everywhere else
 enum decorations : size_t {
   select,
   deselect,
@@ -28,7 +27,6 @@ enum decorations : size_t {
 };
 
 constexpr auto SELECTED_THICKNESS = 4;
-constexpr auto DEFAULT_THICKNESS = 1;
 
 class CodeBlock : public sf::Drawable, public sf::Transformable {
 public:

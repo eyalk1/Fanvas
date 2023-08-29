@@ -62,11 +62,10 @@ CodeBlock::CodeBlock(sf::String source, sf::String header)
                             GetSettings().GetHeaderPartialSizeMul() /
                             GetSettings().GetHeaderPartialSizeDiv())),
       m_border() {
-  // TODO: take values from settings
-  m_border.setOutlineColor(sf::Color::White);
-  m_border.setFillColor(sf::Color::Transparent);
-  m_border.setOutlineThickness(DEFAULT_THICKNESS);
-  m_header.setStyle(sf::Text::Underlined);
+  m_border.setOutlineColor(GetSettings().GetCodeBlockOutlineColor());
+  m_border.setFillColor(GetSettings().GetCodeBlockFillColor());
+  m_border.setOutlineThickness(GetSettings().GetCodeBlockOutlineThickness());
+  m_header.setStyle(GetSettings().GetCodeBlockStyle());
 
   m_header.setPosition(0, 0);
   auto header_bounds = m_header.getGlobalBounds();

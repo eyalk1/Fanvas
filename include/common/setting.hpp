@@ -1,6 +1,8 @@
 #pragma once
 
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -35,6 +37,10 @@ public:
   SettingsGetter(HeaderPartialSizeMul, uint, 1);
   SettingsGetter(HeaderPartialSizeDiv, uint, 2);
   SettingsGetter(Slack, float, 5);
+  SettingsGetter(CodeBlockOutlineColor, sf::Color, sf::Color::White);
+  SettingsGetter(CodeBlockFillColor, sf::Color, sf::Color::Transparent);
+  SettingsGetter(CodeBlockOutlineThickness, float, 1);
+  SettingsGetter(CodeBlockStyle, sf::Text::Style, sf::Text::Style::Underlined);
 };
 
 auto GetSettings() -> const Settings &;
