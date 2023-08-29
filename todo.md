@@ -1,24 +1,29 @@
 # General
-1. add error handling
-1. tabs
-1. annotations
-1. consider having settings not a global - or to ake it readonly
+* add error handling
+* tabs
+* annotations
+* consider having settings not a global - or to ake it readonly
+* use modules
 
 # UI
-1. add mouse navigation in canvas - drag the canvas, zoom and zoom out
-1. menu system in canvas
-1. add animations
-1. move windows w/mouse
-1. copy w/mouse
-1. navigate w/keyboard
-1. themes
+* add mouse navigation in canvas - drag the canvas, zoom and zoom out
+* menu system in canvas
+* add animations
+* move windows w/mouse
+* copy w/mouse
+* navigate w/keyboard
+* themes
 
 # LSP
-1. talk with lsp
-1. lsp manager
+* talk with lsp
+* lsp manager
 
 # Integration
-1. import by name
-1. definition arrows
+* import by name
+* definition arrows
 
-
+# plan until next plan
+1. error handling
+1. menu system
+1. talk with lsp
+1. lsp manager
