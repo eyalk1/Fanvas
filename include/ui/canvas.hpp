@@ -39,8 +39,8 @@ struct CanvasManager {
   auto update_mouse_hover(sf::Event::MouseMoveEvent mouse,
                           std::output_iterator<Canvas::Event> auto to_push)
       -> void;
-  auto add_block(std::string_view header, std::string_view source) -> void;
-  auto decorate_blocks(DecorationCmd) -> void;
+  auto addBlock(std::string_view header, std::string_view source) -> Error;
+  auto decorateBlocks(DecorationCmd) -> void;
   // auto select_block(std::output_iterator<Canvas::Event> auto to_push,
   //                   BlockSet clicked, BlockSet last = {}) -> void;
   // auto highlight_block(std::output_iterator<Canvas::Event> auto to_push,
@@ -48,7 +48,7 @@ struct CanvasManager {
   // auto hover_block(std::output_iterator<Canvas::Event> auto to_push,
   //                  BlockSet last_hovered) -> void;
   // utilities
-  [[nodiscard]] auto block_under_mouse(int x, int y) -> BlockSet;
+  [[nodiscard]] auto blockUnderMouse(int x, int y) -> BlockSet;
 
   CodeBlocksManager m_block_manager;
   BlockSet m_curr_hover;
@@ -93,7 +93,7 @@ auto CanvasManager::handle(Canvas::Event const &e,
     -> void {
   std::visit(Overload{// decorate if it's a decorations cmd
                       [this, to_push](DecorationCmd const &to_dec) {
-                        decorate_blocks(to_dec);
+                        decorateBlocks(to_dec);
                       },
                       // do nothing on any other command
                       [](auto &anything) { (void)anything; }},
@@ -131,7 +131,7 @@ auto CanvasManager::handle_mouse_move(
 auto CanvasManager::handle_mouse_press(
     sf::Event::MouseButtonEvent mouse,
     std::output_iterator<Canvas::Event> auto to_push) -> void {
-  auto clicked_block = block_under_mouse(mouse.x, mouse.y);
+  auto clicked_block = blockUnderMouse(mouse.x, mouse.y);
   surface on = clicked_block.empty()                         ? canvas
                : (clicked_block & m_selected_blocks).empty() ? block
                                                              : selected_block;
@@ -198,7 +198,7 @@ auto CanvasManager::mouse_press_to_actions(
 auto CanvasManager::update_mouse_hover(
     sf::Event::MouseMoveEvent mouse,
     std::output_iterator<Canvas::Event> auto to_push) -> void {
-  auto hovered_block = block_under_mouse(mouse.x, mouse.y);
+  auto hovered_block = blockUnderMouse(mouse.x, mouse.y);
   auto last_hovered = m_curr_hover == hovered_block ? BlockSet() : m_curr_hover;
   m_curr_hover = hovered_block;
   to_push = DecorationCmd().hover(m_curr_hover).dehover(last_hovered);

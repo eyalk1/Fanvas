@@ -38,19 +38,19 @@ auto CodeBlock::getGlobalBounds() const -> sf::FloatRect {
 
 auto CodeBlock::decorate(std::size_t decoration) -> void {
   if (decoration & decorations::highlight) {
-    m_border.setOutlineColor(sf::Color::Red);
+    m_border.setOutlineColor(GetSettings().GetCodeBlockHighlightOutlineColor());
   } else if (decoration & decorations::dehighlight) {
-    m_border.setOutlineColor(sf::Color::White);
+    m_border.setOutlineColor(GetSettings().GetCodeBlockOutlineColor());
   }
   if (decoration & decorations::hover) {
-    m_border.setFillColor(sf::Color(128, 128, 128, 128));
+    m_border.setFillColor(GetSettings().GetCodeBlockHoverFillColor());
   } else if (decoration & decorations::dehover) {
-    m_border.setFillColor(sf::Color::Transparent);
+    m_border.setFillColor(GetSettings().GetCodeBlockFillColor());
   }
   if (decoration & decorations::select) {
-    m_border.setOutlineThickness(SELECTED_THICKNESS);
+    m_border.setOutlineThickness(GetSettings().GetCodeBlockSelectOutlineThickness());
   } else if (decoration & decorations::deselect) {
-    m_border.setOutlineThickness(DEFAULT_THICKNESS);
+    m_border.setOutlineThickness(GetSettings().GetCodeBlockOutlineThickness());
   }
 }
 
@@ -65,7 +65,7 @@ CodeBlock::CodeBlock(sf::String source, sf::String header)
   m_border.setOutlineColor(GetSettings().GetCodeBlockOutlineColor());
   m_border.setFillColor(GetSettings().GetCodeBlockFillColor());
   m_border.setOutlineThickness(GetSettings().GetCodeBlockOutlineThickness());
-  m_header.setStyle(GetSettings().GetCodeBlockStyle());
+  m_header.setStyle(GetSettings().GetCodeBlockHeaderStyle());
 
   m_header.setPosition(0, 0);
   auto header_bounds = m_header.getGlobalBounds();

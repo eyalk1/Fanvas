@@ -18,6 +18,6 @@ public:
 
 private:
   auto handle_hint(Canvas::Event const &) -> void;
-  UIHandler m_ui;
+  UIHandler m_ui{};
 };
 } // namespace Canvas

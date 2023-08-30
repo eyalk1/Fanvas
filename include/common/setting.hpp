@@ -32,15 +32,21 @@ class Settings {
 
 public:
   SettingsGetter(Font, sf::Font);
-  SettingsGetter(MaxTextWindowWidth, uint, 99);
-  SettingsGetter(TextSize, uint, 26);
-  SettingsGetter(HeaderPartialSizeMul, uint, 1);
-  SettingsGetter(HeaderPartialSizeDiv, uint, 2);
-  SettingsGetter(Slack, float, 5);
-  SettingsGetter(CodeBlockOutlineColor, sf::Color, sf::Color::White);
-  SettingsGetter(CodeBlockFillColor, sf::Color, sf::Color::Transparent);
-  SettingsGetter(CodeBlockOutlineThickness, float, 1);
-  SettingsGetter(CodeBlockStyle, sf::Text::Style, sf::Text::Style::Underlined);
+  SettingsGetter(MaxTextWindowWidth, static constexpr uint, 99);
+  SettingsGetter(TextSize, static constexpr uint, 26);
+  SettingsGetter(HeaderPartialSizeMul, static constexpr uint, 1);
+  SettingsGetter(HeaderPartialSizeDiv, static constexpr uint, 2);
+  SettingsGetter(Slack, static constexpr float, 5);
+  SettingsGetter(CodeBlockOutlineColor, const sf::Color, sf::Color::White);
+  SettingsGetter(CodeBlockFillColor, const sf::Color, sf::Color::Transparent);
+  SettingsGetter(CodeBlockOutlineThickness, const float, 1);
+  SettingsGetter(CodeBlockHeaderStyle, static constexpr sf::Text::Style,
+                 sf::Text::Style::Underlined);
+  SettingsGetter(CodeBlockHighlightOutlineColor, const sf::Color,
+                 sf::Color::Red);
+  SettingsGetter(CodeBlockHoverFillColor, const sf::Color,
+                 sf::Color(128, 128, 128));
+  SettingsGetter(CodeBlockSelectOutlineThickness, static constexpr float, 4);
 };
 
 auto GetSettings() -> const Settings &;

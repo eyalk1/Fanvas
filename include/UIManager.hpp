@@ -31,9 +31,6 @@ struct UIHandler {
   UIHandler();
 
 private:
-  // through this function we handle events from the outside
-  auto handle_event(Canvas::Event const &event) -> void;
-
   // process generic sf event - turning it into a canvas event
   auto sf_event2canvas_event(sf::Event event,
                              std::output_iterator<Canvas::Event> auto to_push)
@@ -89,7 +86,6 @@ auto UIHandler::sf_event2canvas_event(
    * click/keypress on canvas - window event
    *
    **/
-  // std::optional<Canvas::Event> e =
   return m_ui_mode ? std::visit(
                          [to_push, event](auto &menu) {
                            return menu.sf_event2canvas_event(event, to_push);

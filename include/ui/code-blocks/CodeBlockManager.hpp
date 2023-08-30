@@ -1,6 +1,7 @@
 #pragma once
 #include "bit_set/bit_set.hpp"
 #include "common/consts.hpp"
+#include "common/error.hpp"
 #include "ui/code-blocks/CodeBlock.hpp"
 #include "utils/utility.hpp"
 #include <SFML/Graphics/Drawable.hpp>
@@ -25,7 +26,7 @@ public:
 
   // forward the parameters to a new allocated window object
   auto newCodeBlock(sf::String &&header, sf::String &&source)
-      -> CodeBlock const &;
+      -> Expect<std::reference_wrapper<const CodeBlock>>;
   // give a predicate return all the windows that satisfy it
   [[nodiscard]] auto findBlocks(auto p) const -> BlockSet;
   // apply an action to all the windows in the set
@@ -36,8 +37,9 @@ public:
   [[nodiscard]] auto get_all_windows() -> BlockSet;
 
 private:
-  [[nodiscard]] auto findOpenspace(sf::Vector2f rec_size, BlockSet available_windows)
-      -> sf::Vector2f;
+  [[nodiscard]] auto findOpenspace(sf::Vector2f rec_size,
+                                   BlockSet available_windows)
+      -> Expect<sf::Vector2f>;
 };
 
 // this function maps the actions enum to the actual textwindow API - this way

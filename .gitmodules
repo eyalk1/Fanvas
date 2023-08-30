@@ -1,0 +1,6 @@
+[submodule "lib-include/smart_enum"]
+	path = lib-include/smart_enum
+	url = https://github.com/seleznevae/smart_enum.git
+[submodule "lib-include/expected"]
+	path = lib-include/expected
+	url = https://github.com/TartanLlama/expected.git

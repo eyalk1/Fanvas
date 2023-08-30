@@ -1,12 +1,14 @@
+#include "ui/code-blocks/CodeBlockManager.hpp"
 #include "bit_set/bit_set.hpp"
 #include "common/consts.hpp"
+#include "common/error.hpp"
 #include "ui/code-blocks/CodeBlock.hpp"
-#include "ui/code-blocks/CodeBlockManager.hpp"
 #include "utils/utility.hpp"
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
 #include <cmath>
+#include <functional>
 #include <numeric>
 #include <optional>
 #include <utility>
@@ -28,7 +30,7 @@ auto CodeBlocksManager::get_all_windows() -> BlockSet {
 }
 
 auto CodeBlocksManager::newCodeBlock(sf::String &&header, sf::String &&source)
-    -> CodeBlock const & {
+    -> Expect<std::reference_wrapper<const CodeBlock>> {
   auto window_it = std::find(m_windows.begin(), m_windows.end(), std::nullopt);
   auto &window = window_it->emplace(header, source);
 
@@ -41,7 +43,10 @@ auto CodeBlocksManager::newCodeBlock(sf::String &&header, sf::String &&source)
 
   auto where_to_place =
       findOpenspace({target_size.width, target_size.height}, available_windows);
-  window.setPosition(where_to_place);
+  if (!where_to_place) {
+    return tl::unexpected(where_to_place.error());
+  }
+  window.setPosition(where_to_place.value());
 
   // TODO: animate indication of where the new window is
 
@@ -62,13 +67,13 @@ auto CodeBlocksManager::draw(sf::RenderTarget &target,
 
 auto CodeBlocksManager::findOpenspace(sf::Vector2f rec_size,
                                       BlockSet current_windows)
-    -> sf::Vector2f {
+    -> Expect<sf::Vector2f> {
   // no windows? no problem!
   if (current_windows.empty())
-    return {0, 0};
+    return sf::Vector2f{0, 0};
   // TODO: add error handling
   if (current_windows.size() == MAX_NUMBER_OF_WINDOWS)
-    throw std::string("bug! use std::expected");
+    return tl::unexpected(codes::TOO_MANY_CODE_BLOCKS);
 
   auto const &slack = GetSettings().GetSlack();
   float min_x = INFINITY;
@@ -94,7 +99,7 @@ auto CodeBlocksManager::findOpenspace(sf::Vector2f rec_size,
     });
     // if non - we are done!
     if (intersects.empty())
-      return {candidate.left, candidate.top};
+      return sf::Vector2f{candidate.left, candidate.top};
 
     float max_x = -INFINITY;
     float max_y = -INFINITY;

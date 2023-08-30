@@ -26,8 +26,6 @@ enum decorations : size_t {
   number_of_decorations,
 };
 
-constexpr auto SELECTED_THICKNESS = 4;
-
 class CodeBlock : public sf::Drawable, public sf::Transformable {
 public:
   CodeBlock(sf::String header, sf::String source_code);

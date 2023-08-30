@@ -14,6 +14,7 @@ namespace Canvas {
 
 auto EventDistributer::run() -> void {
   std::vector<Canvas::Event> event_queue1, event_queue2;
+    // TODO: use GSL not_null
   auto *write_events = &event_queue1;
   auto *read_events = &event_queue2;
   // main loop
